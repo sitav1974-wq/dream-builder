@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#123f63">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>Dream Builder Journal</title>
+<style>
+:root{
+  --bg:#f7f4ec;--card:#fffdfa;--ink:#172033;--muted:#707784;
+  --line:#ddd6c8;--navy:#123f63;--gold:#b48a3a;--good:#16794c;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink)}
+.wrap{max-width:900px;margin:auto;padding:18px 12px 90px}
+header{padding:4px 4px 12px}
+h1{margin:0;color:var(--navy);font-size:30px;line-height:1.15}
+.sub{color:var(--muted);font-size:16px;line-height:1.45;margin-top:5px}
+.datebar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:14px}
+input,textarea,select{font:inherit}
+input[type=date],input[type=text],textarea,select{
+  width:100%;border:1px solid var(--line);border-radius:13px;padding:12px;background:#fff;color:var(--ink)
+}
+.datebar input{width:auto;min-width:165px}
+button{
+  border:none;border-radius:13px;padding:12px 14px;font:inherit;font-weight:700;cursor:pointer;
+  background:var(--navy);color:#fff
+}
+button.secondary{background:#fff;color:var(--navy);border:1px solid var(--line)}
+.tabs{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:8px;
+  position:sticky;top:0;z-index:50;background:rgba(247,244,236,.96);
+  padding:10px 0;backdrop-filter:blur(7px)
+}
+.tabs button{background:#fff;color:var(--navy);border:1px solid var(--line);min-height:62px}
+.tabs button.active{background:var(--navy);color:#fff}
+.panel{display:none}
+.panel.active{display:block}
+.card{
+  background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px;margin:14px 0;
+  box-shadow:0 3px 14px rgba(0,0,0,.03)
+}
+h2{font-size:21px;margin:0 0 8px;color:var(--navy)}
+h3{font-size:17px;margin:17px 0 7px;color:var(--navy)}
+.help{color:var(--muted);line-height:1.5;margin:6px 0 12px}
+.stack{display:grid;gap:10px}
+textarea{min-height:130px;resize:vertical;line-height:1.45}
+.activity-picker{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.activity-picker button{background:#fff;color:var(--navy);border:1px solid var(--line);text-align:left}
+.activity-picker button.active{background:#eef4f8;border-color:#8da7bb}
+.meter-wrap{overflow:auto;border:1px solid var(--line);border-radius:14px}
+table{width:100%;min-width:720px;border-collapse:collapse;background:#fff}
+th,td{padding:8px;border-bottom:1px solid var(--line);text-align:left}
+th{font-size:13px;color:var(--muted);background:#faf8f3}
+td.time{font-weight:800;color:var(--navy);width:75px}
+td input,td select{padding:9px}
+.scorebox{display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding:14px;border-radius:14px;background:#f1f5f7}
+.score{font-size:30px;font-weight:900;color:var(--navy)}
+.mini{font-size:13px;color:var(--muted)}
+.footer-actions{display:flex;gap:8px;flex-wrap:wrap}
+.saved{font-size:13px;color:var(--good);min-height:20px;margin-top:8px}
+.quote{border-left:4px solid var(--gold);padding-left:12px;color:#4b5563;line-height:1.5}
+@media(max-width:640px){
+  h1{font-size:27px}.activity-picker{grid-template-columns:1fr}
+  .wrap{padding-left:10px;padding-right:10px}
+  .tabs button{font-size:16px;padding:10px 5px}
+}
+@media print{
+  .tabs,.footer-actions,.datebar button{display:none!important}
+  .panel{display:block!important}.card{box-shadow:none;break-inside:avoid}
+  body{background:#fff}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>Dream Builder Journal</h1>
+  <div class="sub">Turn your dream into daily behavior — one intentional day at a time.</div>
+  <div class="datebar">
+    <strong>Date</strong>
+    <input id="day" type="date">
+    <button id="todayBtn" class="secondary" type="button">Today</button>
+  </div>
+</header>
+
+<nav class="tabs" aria-label="Main sections">
+  <button type="button" data-tab="today" class="active">Today</button>
+  <button type="button" data-tab="activity">Dream Activity</button>
+  <button type="button" data-tab="meter">Dream Meter</button>
+</nav>
+
+<section id="today" class="panel active">
+  <div class="card">
+    <h2>1. Do It 100%</h2>
+    <p class="help">Choose three things you will do at 100% today. Keep them specific and within your control.</p>
+    <div class="stack">
+      <input id="commit1" type="text" placeholder="1. Today I will...">
+      <input id="commit2" type="text" placeholder="2. Today I will...">
+      <input id="commit3" type="text" placeholder="3. Today I will...">
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>2. Five Daily Wins</h2>
+    <p class="help">At the end of the day, record five things you completed, improved, learned, or handled well.</p>
+    <div class="stack">
+      <input id="win1" type="text" placeholder="Win 1">
+      <input id="win2" type="text" placeholder="Win 2">
+      <input id="win3" type="text" placeholder="Win 3">
+      <input id="win4" type="text" placeholder="Win 4">
+      <input id="win5" type="text" placeholder="Win 5">
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>End-of-Day Reflection</h2>
+    <textarea id="reflection" placeholder="What moved me closer to my dream today? What should I repeat or change tomorrow?"></textarea>
+  </div>
+</section>
+
+<section id="activity" class="panel">
+  <div class="card">
+    <h2>Dream-Building Activity</h2>
+    <p class="help">Choose one reflection for today.</p>
+    <div id="activityPicker" class="activity-picker"></div>
+    <h3 id="activityTitle"></h3>
+    <p id="activityPrompt" class="help"></p>
+    <textarea id="activityText" placeholder="Write here..."></textarea>
+  </div>
+</section>
+
+<section id="meter" class="panel">
+  <div class="card">
+    <h2>Dream Meter</h2>
+    <p class="help">For each hour, note what you were doing. Mark +10 if it moved you toward your dream, −10 if it moved you away, or 0 if neutral.</p>
+    <div class="meter-wrap">
+      <table>
+        <thead>
+          <tr><th>Time</th><th>Activity</th><th>Impact</th><th>Score</th></tr>
+        </thead>
+        <tbody id="meterRows"></tbody>
+      </table>
+    </div>
+    <div class="scorebox">
+      <div><strong>Daily Dream Score</strong><div class="mini">A reflection signal, not a judgment.</div></div>
+      <div id="totalScore" class="score">0</div>
+    </div>
+  </div>
+</section>
+
+<div class="card">
+  <div class="quote">“A dream becomes useful when it changes what you do today.”</div>
+  <div class="footer-actions" style="margin-top:14px">
+    <button type="button" id="saveBtn">Save Today</button>
+    <button type="button" id="clearBtn" class="secondary">Clear This Day</button>
+    <button type="button" id="printBtn" class="secondary">Print / Save as PDF</button>
+  </div>
+  <div id="saved" class="saved"></div>
+</div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  const activities = [
+    {title:"Declare Your Dream",prompt:"State your dream clearly. Then write why it matters to you and why you are willing to work for it."},
+    {title:"Visualization",prompt:"Imagine the day your dream becomes real. What do you see, hear, touch, and feel? Who is beside you? How do they speak to you, and how do you feel in that moment?"},
+    {title:"Gratitude",prompt:"Write 10 things you are grateful for right now — people, opportunities, abilities, lessons, or simple things already present in your life."},
+    {title:"One Habit to Change",prompt:"Choose one habit you want to change for your dream. Describe the new version of yourself you are becoming, as if it is already true."},
+    {title:"No Blame, No Excuses",prompt:"For today, stop blaming, complaining, and making excuses. Observe what changes when you focus only on what you can control."},
+    {title:"Your Dream Team",prompt:"Describe the kind of people you need around you to make your dream possible. What qualities, values, skills, and behaviors should they have?"},
+    {title:"Why You Deserve Success",prompt:"Write three reasons you are worthy of the success you are working toward. Complete the sentence: “I am a person who…”"}
+  ];
+
+  let state = {};
+  const ids = ['commit1','commit2','commit3','win1','win2','win3','win4','win5','reflection','activityText'];
+
+  function emptyState(){
+    return {commit1:'',commit2:'',commit3:'',win1:'',win2:'',win3:'',win4:'',win5:'',
+      reflection:'',activityIndex:0,activityText:'',meter:{}};
+  }
+
+  const day = document.getElementById('day');
+  const localToday = new Date();
+  const yyyy = localToday.getFullYear();
+  const mm = String(localToday.getMonth()+1).padStart(2,'0');
+  const dd = String(localToday.getDate()).padStart(2,'0');
+  day.value = `${yyyy}-${mm}-${dd}`;
+
+  const picker = document.getElementById('activityPicker');
+  activities.forEach((a,i)=>{
+    const b = document.createElement('button');
+    b.type='button';
+    b.textContent=(i+1)+'. '+a.title;
+    b.dataset.i=i;
+    b.addEventListener('click',()=>selectActivity(i));
+    picker.appendChild(b);
+  });
+
+  const tbody = document.getElementById('meterRows');
+  for(let h=6; h<=24; h++){
+    const tr=document.createElement('tr');
+    tr.innerHTML =
+      `<td class="time">${String(h).padStart(2,'0')}:00</td>
+       <td><input type="text" data-hour="${h}" data-field="activity" placeholder="What were you doing?"></td>
+       <td><select data-hour="${h}" data-field="impact">
+         <option value="0">Neutral / not sure</option>
+         <option value="10">Toward dream (+10)</option>
+         <option value="-10">Away from dream (−10)</option>
+       </select></td>
+       <td class="rowScore">0</td>`;
+    tbody.appendChild(tr);
+  }
+
+  function storageKey(){ return 'dreamBuilderV2:'+day.value; }
+
+  function selectActivity(i){
+    i = Number(i) || 0;
+    state.activityIndex = i;
+    document.querySelectorAll('#activityPicker button').forEach(b=>{
+      b.classList.toggle('active', Number(b.dataset.i)===i);
+    });
+    document.getElementById('activityTitle').textContent = activities[i].title;
+    document.getElementById('activityPrompt').textContent = activities[i].prompt;
+  }
+
+  function gather(){
+    ids.forEach(id=> state[id]=document.getElementById(id).value);
+    state.meter={};
+    document.querySelectorAll('[data-hour]').forEach(el=>{
+      const h=el.dataset.hour;
+      if(!state.meter[h]) state.meter[h]={};
+      state.meter[h][el.dataset.field]=el.value;
+    });
+  }
+
+  function calcScore(){
+    let total=0;
+    document.querySelectorAll('select[data-field="impact"]').forEach(s=>{
+      const v=Number(s.value || 0);
+      total += v;
+      s.closest('tr').querySelector('.rowScore').textContent=(v>0?'+':'')+v;
+    });
+    document.getElementById('totalScore').textContent=(total>0?'+':'')+total;
+  }
+
+  function render(){
+    ids.forEach(id=> document.getElementById(id).value = state[id] || '');
+    document.querySelectorAll('[data-hour]').forEach(el=>{
+      const obj = state.meter && state.meter[el.dataset.hour];
+      const value = obj ? obj[el.dataset.field] : undefined;
+      el.value = value !== undefined ? value : (el.dataset.field==='impact' ? '0' : '');
+    });
+    selectActivity(state.activityIndex || 0);
+    calcScore();
+  }
+
+  function load(){
+    state = emptyState();
+    try{
+      const raw=localStorage.getItem(storageKey());
+      if(raw) state={...state,...JSON.parse(raw)};
+    }catch(e){}
+    render();
+    document.getElementById('saved').textContent='';
+  }
+
+  function save(){
+    gather();
+    try{
+      localStorage.setItem(storageKey(),JSON.stringify(state));
+      document.getElementById('saved').textContent='Saved on this device ✓';
+    }catch(e){
+      document.getElementById('saved').textContent='Could not save locally in this browser.';
+    }
+  }
+
+  document.querySelectorAll('.tabs button').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      document.querySelectorAll('.tabs button').forEach(b=>b.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.tab).classList.add('active');
+      window.scrollTo({top:0,behavior:'smooth'});
+    });
+  });
+
+  document.addEventListener('input',e=>{
+    if(e.target.matches('input,textarea,select')){
+      if(e.target.matches('select[data-field="impact"]')) calcScore();
+    }
+  });
+
+  document.addEventListener('change',e=>{
+    if(e.target.matches('input,textarea,select')){
+      if(e.target.matches('select[data-field="impact"]')) calcScore();
+      save();
+    }
+  });
+
+  document.addEventListener('focusout',e=>{
+    if(e.target.matches('input,textarea')) save();
+  });
+
+  document.getElementById('saveBtn').addEventListener('click',save);
+  document.getElementById('todayBtn').addEventListener('click',()=>{
+    const d=new Date();
+    day.value=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    load();
+  });
+  day.addEventListener('change',load);
+
+  document.getElementById('clearBtn').addEventListener('click',()=>{
+    if(confirm('Clear all entries for this date?')){
+      try{localStorage.removeItem(storageKey())}catch(e){}
+      load();
+    }
+  });
+  document.getElementById('printBtn').addEventListener('click',()=>window.print());
+
+  load();
+})();
+</script>
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('./sw.js').catch(function(){});
+  });
+}
+</script>
+
+</body>
+</html>
