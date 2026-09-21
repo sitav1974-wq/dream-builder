@@ -1,20 +1,15 @@
-DREAM BUILDER V3 — UPDATE
+DREAM BUILDER V3.1 — CACHE FIX
 
-New in V3:
-- Daily Review / History tab
-- Review saved entries day by day
-- Previous / next day buttons
-- Saved-days list, newest first
-- Open any historical day back in the Today editor
-- Share one day's summary using Android share sheet (LINE, Gmail, Messages, etc.)
-- Copy one day's summary to clipboard
-- Keeps all V2 features: EN/Thai, weekly progress, streaks, PIN lock, backup/export, EPOS/ICRS, offline PWA
+Your V3 index.html and manifest are already correct.
 
-Upload/replace these root files in the GitHub repo:
-- index.html
+Important fix:
+- Replace sw.js with this V3.1 sw.js.
+- The cache name is now dream-builder-v3-20260921 so the installed app can discard the old V2 cache.
+
+For your current GitHub repo, you only need to upload/replace:
 - sw.js
-- manifest.webmanifest
-- icon-192.png
-- icon-512.png
 
-GitHub Pages will redeploy automatically after commit.
+Then commit directly to main.
+Wait for GitHub Pages to redeploy, open:
+https://sitav1974-wq.github.io/dream-builder/?v=31
+Refresh once, close the installed app from Recent Apps, then reopen it.
