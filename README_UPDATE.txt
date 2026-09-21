@@ -1,21 +1,20 @@
-DREAM BUILDER V2 — UPDATE
-Replace the existing root files in your GitHub dream-builder repository with:
-index.html
-manifest.webmanifest
-sw.js
-icon-192.png
-icon-512.png
+DREAM BUILDER V3 — UPDATE
 
-New in V2:
-- English / Thai switch
-- Big Dream + Why + Target Date + Next Milestone
-- Three daily actions with completion checkboxes
-- Five Daily Wins + reflection
-- Dream Activity prompts
-- Hourly Dream Meter
-- Weekly progress, streak, completed actions, average Dream Score
-- Weekly reflection
-- PIN screen lock (screen lock only; local storage is not encrypted)
-- JSON backup/restore and CSV export
-- EPOS / ICRS reflection prompts
-- Offline PWA
+New in V3:
+- Daily Review / History tab
+- Review saved entries day by day
+- Previous / next day buttons
+- Saved-days list, newest first
+- Open any historical day back in the Today editor
+- Share one day's summary using Android share sheet (LINE, Gmail, Messages, etc.)
+- Copy one day's summary to clipboard
+- Keeps all V2 features: EN/Thai, weekly progress, streaks, PIN lock, backup/export, EPOS/ICRS, offline PWA
+
+Upload/replace these root files in the GitHub repo:
+- index.html
+- sw.js
+- manifest.webmanifest
+- icon-192.png
+- icon-512.png
+
+GitHub Pages will redeploy automatically after commit.
