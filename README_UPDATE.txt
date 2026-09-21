@@ -1,19 +1,24 @@
-DREAM BUILDER V7 — PRODUCTION GOAL TRACKER
+DREAM BUILDER V9 — DALLAS 2030
 
-New:
-- Production Goals dashboard
-- Actual FYP + Actual FYC inputs (autosaved locally)
-- FYC milestone ladder:
-  MDRT ฿2,324,000
-  Convention ฿4,500,000
-  COT ฿6,972,000
-  TOT ฿13,944,000
-  Selfie Prime ฿15,000,000
-- Automatic Actual / Gap / Progress calculation
-- Next-goal card on the Dream Builder home screen
-- Shareable production progress summary
-- Backup now also includes Production Goals and saved ICRS Client Conversation sessions
+Added Dallas 2030 tracker:
+- Target date: January 14, 2030
+- Dynamic days remaining
+- Approximate calendar months remaining
+- Savings target: USD 2,100,000
+- Actual savings: user input
+- Gap: automatic
+- Progress bar: automatic
+- Dallas savings are cumulative and DO NOT reset every January.
+- Annual FYP/FYC production tracking still resets by calendar year as designed.
+- Backup now includes Dallas savings data.
 
-The supplied milestone numbers are stored as FYC targets. FYP actual is tracked separately.
+As of September 21, 2026, the countdown is 1,211 days (about 39 months).
 
-Upload/replace: index.html, sw.js, manifest.webmanifest, icon-192.png, icon-512.png
+Upload/replace:
+index.html
+sw.js
+manifest.webmanifest
+icon-192.png
+icon-512.png
+
+Do not upload personal backup JSON/CSV files to a public GitHub repository.

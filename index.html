@@ -51,6 +51,22 @@ footer{text-align:center;color:var(--muted);font-size:11px;padding:14px 0 2px}
 
 .goal-sheet{width:min(760px,100%);max-height:94vh;overflow:auto;background:var(--card);border-radius:26px 26px 18px 18px;padding:20px;box-shadow:0 -10px 50px rgba(0,0,0,.25)}
 .goal-actuals{display:grid;grid-template-columns:1fr 1fr;gap:10px}.money-input{font-weight:900;color:var(--navy);font-size:18px}.goal-pulse{display:grid;grid-template-columns:1.2fr .8fr .8fr;gap:8px;align-items:center}.goal-pulse .metric strong{font-size:17px}.goal-highlight{background:linear-gradient(145deg,#fffaf0,#fff);border:1px solid #dac596;border-radius:20px;padding:16px;margin:12px 0}.goal-highlight .name{font-size:24px;font-weight:950;color:var(--navy)}.goal-highlight .amount{font-size:13px;color:var(--muted)}.goal-track{height:12px;background:#e8e7e3;border-radius:999px;overflow:hidden;margin:11px 0}.goal-fill{height:100%;width:0;background:linear-gradient(90deg,var(--gold),var(--green));border-radius:999px;transition:width .25s ease}.goal-ladder{display:grid;gap:9px}.goal-row{border:1px solid var(--line);background:#fff;border-radius:17px;padding:14px}.goal-row-top{display:flex;align-items:center;justify-content:space-between;gap:10px}.goal-row .goal-name{font-weight:950;color:var(--navy);font-size:18px}.goal-row .goal-target{font-size:13px;color:var(--muted)}.goal-row-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:10px}.goal-mini{background:#f8f8f5;border-radius:12px;padding:9px}.goal-mini strong{display:block;color:var(--navy);font-size:14px}.goal-mini span{font-size:10px;color:var(--muted)}.goal-badge{border-radius:999px;padding:5px 9px;font-size:11px;font-weight:900;background:#f0f0ed;color:#777}.goal-badge.achieved{background:var(--softgreen);color:var(--green)}.goal-note{border-left:4px solid var(--gold);padding:9px 0 9px 12px;color:#4b5563;margin:12px 0}.goal-status{font-size:12px;color:var(--green);min-height:18px}.goal-quick{border-color:#d5bd86!important;background:#fffaf0!important}.goal-quick small{color:#6c6253!important}
+
+.goal-year-row{display:grid;grid-template-columns:.7fr 1.3fr;gap:10px;align-items:end;margin:10px 0 12px}
+.goal-year-note{border:1px solid var(--line);background:#faf8f3;border-radius:14px;padding:11px 12px;color:var(--muted);font-size:13px;line-height:1.35}
+.fyc-highlight{margin-top:16px;background:linear-gradient(145deg,#fffaf0,#f7f1df)}
+.fyc-highlight .name{color:var(--navy)}
+.goal-definition{font-size:12px;color:var(--muted);margin-top:2px}
+
+.dallas-card{background:linear-gradient(145deg,#f8fbfd,#fffaf0);border:1px solid #c9b77f;border-radius:20px;padding:16px;margin:14px 0}
+.dallas-card .big-days{font-size:38px;line-height:1;font-weight:950;color:var(--navy);margin:4px 0}
+.dallas-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.dallas-mini{background:#fff;border:1px solid var(--line);border-radius:13px;padding:10px}
+.dallas-mini strong{display:block;color:var(--navy);font-size:15px}
+.dallas-mini span{font-size:10px;color:var(--muted)}
+.dallas-home{border-color:#bfcfd7!important;background:linear-gradient(145deg,#f6fbfd,#fffaf0)!important}
+@media(max-width:720px){.dallas-grid{grid-template-columns:1fr 1fr}.dallas-grid .dallas-mini:first-child{grid-column:1/-1}}
+@media(max-width:720px){.goal-year-row{grid-template-columns:1fr}}
 @media(max-width:720px){.dashboard-grid,.grid2,.grid3,.epos-grid{grid-template-columns:1fr}.quick-grid{grid-template-columns:1fr 1fr}.week-stats{grid-template-columns:1fr 1fr}.history-item{grid-template-columns:1fr}.brand h1{font-size:25px}.header-actions .chip span{display:none}.month-day{min-height:52px}.metric-row{grid-template-columns:repeat(3,1fr)}}
 </style>
 </head>
@@ -68,28 +84,88 @@ footer{text-align:center;color:var(--muted);font-size:11px;padding:14px 0 2px}
 
 
 
+
 <div id="goalModal" class="modal hidden">
   <div class="goal-sheet">
-    <div class="sheet-head"><div><div class="eyebrow">DREAM BUILDER</div><h2 id="goalTitle">Production Goals</h2></div><button id="closeGoalMode" class="close">✕</button></div>
-    <p id="goalIntro" class="muted">Track FYP and FYC actuals. Your milestone ladder below uses the FYC targets you gave me.</p>
+    <div class="sheet-head">
+      <div><div class="eyebrow">DREAM BUILDER</div><h2 id="goalTitle">Production Goals</h2></div>
+      <button id="closeGoalMode" class="close">✕</button>
+    </div>
+
+    <p id="goalIntro" class="muted">FYP = First Year Premium. FYC = First Year Commission. Track them separately.</p>
+
+    <div class="goal-year-row">
+      <div>
+        <label id="goalYearLabel">Production year</label>
+        <select id="goalYear"></select>
+      </div>
+      <div class="goal-year-note" id="goalYearNote">New year starts at 0 automatically on January 1. Prior years stay saved.</div>
+    </div>
 
     <div class="goal-actuals">
-      <div><label id="actualFypLabel">Actual FYP</label><input id="actualFyp" class="money-input" type="number" min="0" step="1000" inputmode="decimal" placeholder="0"></div>
-      <div><label id="actualFycLabel">Actual FYC</label><input id="actualFyc" class="money-input" type="number" min="0" step="1000" inputmode="decimal" placeholder="0"></div>
+      <div>
+        <label id="actualFypLabel">Actual FYP — First Year Premium</label>
+        <input id="actualFyp" class="money-input" type="number" min="0" step="1000" inputmode="decimal" placeholder="0">
+      </div>
+      <div>
+        <label id="actualFycLabel">Actual FYC — First Year Commission</label>
+        <input id="actualFyc" class="money-input" type="number" min="0" step="1000" inputmode="decimal" placeholder="0">
+      </div>
     </div>
     <div id="goalSaveStatus" class="goal-status">Saved locally</div>
 
     <div class="goal-highlight">
-      <div class="eyebrow" id="nextGoalLabel">NEXT GOAL</div>
+      <div class="eyebrow" id="nextGoalLabel">NEXT FYP GOAL</div>
       <div id="nextGoalName" class="name">MDRT</div>
-      <div id="nextGoalTarget" class="amount">FYC target ฿2,324,000</div>
+      <div id="nextGoalTarget" class="amount">FYP target ฿2,324,000</div>
       <div class="goal-track"><div id="nextGoalFill" class="goal-fill"></div></div>
-      <div class="metric-row"><div class="metric"><strong id="nextActual">฿0</strong><span id="actualLabelSmall">Actual FYC</span></div><div class="metric"><strong id="nextGap">฿2,324,000</strong><span id="gapLabelSmall">Gap</span></div><div class="metric"><strong id="nextPercent">0%</strong><span id="progressLabelSmall">Progress</span></div></div>
+      <div class="metric-row">
+        <div class="metric"><strong id="nextActual">฿0</strong><span id="actualLabelSmall">Actual FYP</span></div>
+        <div class="metric"><strong id="nextGap">฿2,324,000</strong><span id="gapLabelSmall">FYP Gap</span></div>
+        <div class="metric"><strong id="nextPercent">0%</strong><span id="progressLabelSmall">Progress</span></div>
+      </div>
     </div>
 
-    <div class="goal-note" id="goalNote">The gap is calculated from Actual FYC. Actual FYP is tracked separately so you can see both production and commission progress without mixing them.</div>
+    <div class="goal-note" id="goalNote">FYP ladder: MDRT → Convention → COT → TOT → Selfie Prime → Dallas Living.</div>
     <div id="goalLadder" class="goal-ladder"></div>
-    <div class="actions"><button id="shareGoalsBtn" class="btn">Share progress</button><button id="closeGoalBottom" class="btn primary">Done</button></div>
+
+    <div class="goal-highlight fyc-highlight">
+      <div class="eyebrow" id="fycGoalLabel">DALLAS LIVING — ANNUAL FYC</div>
+      <div class="name">฿10,000,000</div>
+      <div class="amount" id="fycGoalText">FYC target per year</div>
+      <div class="goal-track"><div id="fycGoalFill" class="goal-fill"></div></div>
+      <div class="metric-row">
+        <div class="metric"><strong id="fycActualMetric">฿0</strong><span>Actual FYC</span></div>
+        <div class="metric"><strong id="fycGapMetric">฿10,000,000</strong><span id="fycGapLabel">FYC Gap</span></div>
+        <div class="metric"><strong id="fycPercentMetric">0%</strong><span id="fycProgressLabel">Progress</span></div>
+      </div>
+    </div>
+
+    <div class="goal-note" id="fycNote">FYC is commission. It is separate from the FYP qualification ladder.</div>
+
+    <div class="dallas-card">
+      <div class="eyebrow" id="dallasFundEyebrow">DALLAS 2030</div>
+      <div id="dallasDays" class="big-days">—</div>
+      <div id="dallasCountdownText" class="muted">days until January 14, 2030</div>
+      <div id="dallasMonthsText" style="font-weight:900;color:var(--navy);margin-top:5px">About 39 months</div>
+
+      <div class="goal-track"><div id="dallasFundFill" class="goal-fill"></div></div>
+
+      <div class="dallas-grid">
+        <div class="dallas-mini"><strong>$2,100,000</strong><span id="dallasTargetLabel">Savings goal</span></div>
+        <div class="dallas-mini"><strong id="dallasActualMetric">$0</strong><span id="dallasActualLabel">Actual saved</span></div>
+        <div class="dallas-mini"><strong id="dallasGapMetric">$2,100,000</strong><span id="dallasGapLabel">Gap</span></div>
+      </div>
+
+      <label id="dallasActualInputLabel">Actual Dallas savings (USD)</label>
+      <input id="dallasActualInput" class="money-input" type="number" min="0" step="1000" inputmode="decimal" placeholder="0">
+      <div id="dallasSaveStatus" class="goal-status">Saved locally</div>
+    </div>
+
+    <div class="actions">
+      <button id="shareGoalsBtn" class="btn">Share progress</button>
+      <button id="closeGoalBottom" class="btn primary">Done</button>
+    </div>
   </div>
 </div>
 
@@ -176,7 +252,7 @@ footer{text-align:center;color:var(--muted);font-size:11px;padding:14px 0 2px}
       <div class="actions"><button id="saveEposBtn" class="btn primary" data-t="saveNotes">Save notes</button></div>
     </div>
     <div id="more-goals" class="more-pane hidden">
-      <p id="goalsMoreHelp" class="muted">Your 2026 FYC milestone ladder: MDRT → Convention → COT → TOT → Selfie Prime.</p>
+      <p id="goalsMoreHelp" class="muted">FYP ladder: MDRT → Convention → COT → TOT → Selfie Prime → Dallas Living. FYC is tracked separately.</p>
       <button id="openGoalModeFromMore" class="btn primary full">◎ Open Goal Tracker</button>
     </div>
     <div id="more-backup" class="more-pane hidden">
@@ -219,7 +295,17 @@ footer{text-align:center;color:var(--muted);font-size:11px;padding:14px 0 2px}
         </div>
       </div>
       <div class="card"><h2 data-t="quickStart">Quick start</h2><div class="quick-grid"><button class="quick" data-go="today" data-sub="plan">✓ <span data-t="planToday">Plan today</span><small data-t="planTodaySub">Choose your 3 controllable actions.</small></button><button class="quick" data-go="activity">✦ <span data-t="doActivity">Dream activity</span><small data-t="doActivitySub">Reconnect with the person you are becoming.</small></button><button class="quick" data-go="history">◫ <span data-t="reviewPast">Review past days</span><small data-t="reviewPastSub">See the evidence you have built.</small></button><button id="openClientModeQuick" class="quick client-mode-btn">☕ <span>Client mode</span><small>Smile. Stay curious. Tell me more.</small></button><button id="openGoalModeQuick" class="quick goal-quick">◎ <span>Goals</span><small>FYP • FYC • Actual • Gap</small></button></div></div>
-      <div class="card goal-quick"><div class="goal-pulse"><div><div class="eyebrow" id="homeNextGoalLabel">NEXT PRODUCTION GOAL</div><h2 id="homeNextGoal">MDRT</h2></div><div class="metric"><strong id="homeGoalActual">฿0</strong><span>Actual FYC</span></div><div class="metric"><strong id="homeGoalGap">฿2.324M</strong><span>Gap</span></div></div><div class="goal-track"><div id="homeGoalFill" class="goal-fill"></div></div><button id="homeOpenGoals" class="btn full">Open goal tracker</button></div>
+      <div class="card goal-quick"><div class="goal-pulse"><div><div class="eyebrow" id="homeNextGoalLabel">NEXT FYP GOAL</div><h2 id="homeNextGoal">MDRT</h2></div><div class="metric"><strong id="homeGoalActual">฿0</strong><span>Actual FYP</span></div><div class="metric"><strong id="homeGoalGap">฿2.324M</strong><span>FYP Gap</span></div></div><div class="goal-track"><div id="homeGoalFill" class="goal-fill"></div></div><div class="metric-row" style="margin-top:10px"><div class="metric"><strong id="homeFycActual">฿0</strong><span>Actual FYC</span></div><div class="metric"><strong id="homeFycGap">฿10M</strong><span>FYC Gap to Dallas</span></div></div><button id="homeOpenGoals" class="btn full">Open goal tracker</button></div>
+      <div class="card dallas-home">
+        <div class="eyebrow">DALLAS 2030</div>
+        <div class="goal-pulse">
+          <div><h2 id="homeDallasDays" style="margin-bottom:2px">— days</h2><small id="homeDallasDate">to Jan 14, 2030</small></div>
+          <div class="metric"><strong id="homeDallasActual">$0</strong><span>Actual saved</span></div>
+          <div class="metric"><strong id="homeDallasGap">$2.1M</strong><span>Gap to $2.1M</span></div>
+        </div>
+        <div class="goal-track"><div id="homeDallasFill" class="goal-fill"></div></div>
+        <button id="homeOpenDallasGoals" class="btn full">Open Dallas tracker</button>
+      </div>
       <div class="card"><div class="eyebrow" data-t="bridgeTitle">Dream → Behavior</div><p class="muted" style="font-size:16px;margin-bottom:0">Dream → Why → 3 actions → Dream Meter → Wins → Reflection → Review</p></div>
     </section>
 
@@ -340,25 +426,357 @@ qsa('#today input,#today textarea,#today select,#activityText').forEach(el=>{el.
 $('saveEposBtn').onclick=()=>{saveGlobal();flash(lang==='th'?'บันทึกแล้ว':'Saved')};
 
 
-const PRODUCTION_GOALS=[
-  {name:'MDRT',targetFyc:2324000},
-  {name:'Convention',targetFyc:4500000},
-  {name:'COT',targetFyc:6972000},
-  {name:'TOT',targetFyc:13944000},
-  {name:'Selfie Prime',targetFyc:15000000}
+
+const FYP_GOALS=[
+  {name:'MDRT',targetFyp:2324000},
+  {name:'Convention',targetFyp:4500000},
+  {name:'COT',targetFyp:6972000},
+  {name:'TOT',targetFyp:13944000},
+  {name:'Selfie Prime',targetFyp:15000000},
+  {name:'Dallas Living',targetFyp:71000000}
 ];
+const DALLAS_FYC_TARGET=10000000;
+const GOAL_STORE_KEY='db_production_goals_v8';
 let goalSaveTimer=null;
-function money(n){const v=Math.max(0,Number(n)||0);return '฿'+Math.round(v).toLocaleString('en-US')}
-function compactMoney(n){const v=Math.max(0,Number(n)||0);if(v>=1000000)return '฿'+(v/1000000).toFixed(v%1000000?3:0).replace(/0+$/,'').replace(/\.$/,'')+'M';if(v>=1000)return '฿'+Math.round(v/1000)+'K';return money(v)}
-function loadGoalState(){try{return Object.assign({actualFyp:0,actualFyc:0,updatedAt:null},JSON.parse(localStorage.getItem('db_production_goals_v7')||'{}'))}catch{return{actualFyp:0,actualFyc:0,updatedAt:null}}}
-function saveGoalState(){const s={actualFyp:Math.max(0,Number($('actualFyp').value)||0),actualFyc:Math.max(0,Number($('actualFyc').value)||0),updatedAt:new Date().toISOString()};localStorage.setItem('db_production_goals_v7',JSON.stringify(s));$('goalSaveStatus').textContent=lang==='th'?'บันทึกในเครื่องแล้ว ✓':'Saved locally ✓';renderGoalTracker();renderHomeGoalPulse();return s}
-function nextProductionGoal(actual){return PRODUCTION_GOALS.find(g=>actual<g.targetFyc)||null}
-function renderGoalTracker(){if(!$('goalLadder'))return;const s=loadGoalState(),actual=s.actualFyc||0;const next=nextProductionGoal(actual);$('actualFyp').value=s.actualFyp||'';$('actualFyc').value=s.actualFyc||'';$('goalLadder').innerHTML='';PRODUCTION_GOALS.forEach(g=>{const gap=Math.max(0,g.targetFyc-actual),pct=Math.min(100,g.targetFyc?actual/g.targetFyc*100:0),achieved=actual>=g.targetFyc;const row=document.createElement('div');row.className='goal-row';row.innerHTML='<div class="goal-row-top"><div><div class="goal-name">'+g.name+'</div><div class="goal-target">FYC '+money(g.targetFyc)+'</div></div><span class="goal-badge '+(achieved?'achieved':'')+'">'+(achieved?(lang==='th'?'สำเร็จ ✓':'Achieved ✓'):(lang==='th'?'กำลังไป':'In progress'))+'</span></div><div class="goal-track"><div class="goal-fill" style="width:'+pct+'%"></div></div><div class="goal-row-grid"><div class="goal-mini"><strong>'+money(actual)+'</strong><span>'+(lang==='th'?'Actual FYC':'Actual FYC')+'</span></div><div class="goal-mini"><strong>'+money(gap)+'</strong><span>'+(lang==='th'?'Gap':'Gap')+'</span></div><div class="goal-mini"><strong>'+pct.toFixed(1)+'%</strong><span>'+(lang==='th'?'ความคืบหน้า':'Progress')+'</span></div></div>';$('goalLadder').appendChild(row)});if(next){const gap=Math.max(0,next.targetFyc-actual),pct=Math.min(100,actual/next.targetFyc*100);$('nextGoalName').textContent=next.name;$('nextGoalTarget').textContent=(lang==='th'?'เป้าหมาย FYC ':'FYC target ')+money(next.targetFyc);$('nextActual').textContent=money(actual);$('nextGap').textContent=money(gap);$('nextPercent').textContent=pct.toFixed(1)+'%';$('nextGoalFill').style.width=pct+'%'}else{$('nextGoalName').textContent=lang==='th'?'ครบทุกเป้าหมาย 🎉':'All goals achieved 🎉';$('nextGoalTarget').textContent='Selfie Prime '+money(PRODUCTION_GOALS.at(-1).targetFyc);$('nextActual').textContent=money(actual);$('nextGap').textContent=money(0);$('nextPercent').textContent='100%';$('nextGoalFill').style.width='100%'}}
-function renderHomeGoalPulse(){if(!$('homeNextGoal'))return;const s=loadGoalState(),actual=s.actualFyc||0,next=nextProductionGoal(actual);$('homeGoalActual').textContent=compactMoney(actual);if(next){const gap=Math.max(0,next.targetFyc-actual),pct=Math.min(100,actual/next.targetFyc*100);$('homeNextGoal').textContent=next.name;$('homeGoalGap').textContent=compactMoney(gap);$('homeGoalFill').style.width=pct+'%'}else{$('homeNextGoal').textContent=lang==='th'?'ครบทุกเป้าหมาย 🎉':'All goals achieved 🎉';$('homeGoalGap').textContent=money(0);$('homeGoalFill').style.width='100%'}}
-function refreshGoalLanguage(){if(!$('goalModal'))return;$('goalTitle').textContent=lang==='th'?'เป้าหมายผลงาน':'Production Goals';$('goalIntro').textContent=lang==='th'?'ติดตาม Actual FYP และ Actual FYC โดย Goal Ladder ด้านล่างใช้เป้าหมาย FYC ที่คุณให้ไว้':'Track FYP and FYC actuals. Your milestone ladder below uses the FYC targets you gave me.';$('actualFypLabel').textContent=lang==='th'?'Actual FYP':'Actual FYP';$('actualFycLabel').textContent=lang==='th'?'Actual FYC':'Actual FYC';$('nextGoalLabel').textContent=lang==='th'?'เป้าหมายถัดไป':'NEXT GOAL';$('actualLabelSmall').textContent='Actual FYC';$('gapLabelSmall').textContent='Gap';$('progressLabelSmall').textContent=lang==='th'?'ความคืบหน้า':'Progress';$('goalNote').textContent=lang==='th'?'Gap คำนวณจาก Actual FYC ส่วน Actual FYP แยกไว้ให้เห็นทั้งยอดผลิตและรายได้โดยไม่ปนกัน':'The gap is calculated from Actual FYC. Actual FYP is tracked separately so you can see both production and commission progress without mixing them.';$('shareGoalsBtn').textContent=lang==='th'?'ส่งต่อความคืบหน้า':'Share progress';$('closeGoalBottom').textContent=lang==='th'?'เรียบร้อย':'Done';if($('goalsMoreHelp'))$('goalsMoreHelp').textContent=lang==='th'?'Goal Ladder FYC ปี 2026: MDRT → Convention → COT → TOT → Selfie Prime':'Your 2026 FYC milestone ladder: MDRT → Convention → COT → TOT → Selfie Prime.';if($('openGoalModeFromMore'))$('openGoalModeFromMore').textContent=lang==='th'?'◎ เปิด Goal Tracker':'◎ Open Goal Tracker';if($('homeNextGoalLabel'))$('homeNextGoalLabel').textContent=lang==='th'?'เป้าหมายผลงานถัดไป':'NEXT PRODUCTION GOAL';if($('homeOpenGoals'))$('homeOpenGoals').textContent=lang==='th'?'เปิด Goal Tracker':'Open goal tracker';renderGoalTracker();renderHomeGoalPulse()}
-function openGoalMode(){$('moreModal').classList.add('hidden');$('goalModal').classList.remove('hidden');refreshGoalLanguage();renderGoalTracker()}
-function buildGoalSummary(){const s=loadGoalState(),actual=s.actualFyc||0,next=nextProductionGoal(actual);let a=[];a.push(lang==='th'?'Dream Builder — เป้าหมายผลงาน':'Dream Builder — Production Goals');a.push('Actual FYP: '+money(s.actualFyp));a.push('Actual FYC: '+money(actual));a.push('');PRODUCTION_GOALS.forEach(g=>a.push((actual>=g.targetFyc?'✓ ':'○ ')+g.name+' — FYC '+money(g.targetFyc)+' — '+(lang==='th'?'Gap ':'Gap ')+money(Math.max(0,g.targetFyc-actual))));if(next){a.push('');a.push((lang==='th'?'Next: ':'Next: ')+next.name+' — '+(lang==='th'?'เหลือ ':'Gap ')+money(next.targetFyc-actual))}return a.join('\n')}
-$('openGoalModeQuick').onclick=openGoalMode;$('homeOpenGoals').onclick=openGoalMode;$('openGoalModeFromMore').onclick=openGoalMode;$('closeGoalMode').onclick=()=>{$('goalModal').classList.add('hidden')};$('closeGoalBottom').onclick=()=>{$('goalModal').classList.add('hidden')};$('goalModal').onclick=e=>{if(e.target===$('goalModal'))$('goalModal').classList.add('hidden')};['actualFyp','actualFyc'].forEach(id=>$(id).addEventListener('input',()=>{$('goalSaveStatus').textContent=lang==='th'?'กำลังบันทึก...':'Saving...';clearTimeout(goalSaveTimer);goalSaveTimer=setTimeout(saveGoalState,350)}));$('shareGoalsBtn').onclick=()=>shareText(lang==='th'?'เป้าหมายผลงาน':'Production Goals',buildGoalSummary());
+
+function money(n){
+  const v=Math.max(0,Number(n)||0);
+  return '฿'+Math.round(v).toLocaleString('en-US')
+}
+function compactMoney(n){
+  const v=Math.max(0,Number(n)||0);
+  if(v>=1000000)return '฿'+(v/1000000).toFixed(v%1000000?3:0).replace(/0+$/,'').replace(/\.$/,'')+'M';
+  if(v>=1000)return '฿'+Math.round(v/1000)+'K';
+  return money(v)
+}
+function currentGoalYear(){return new Date().getFullYear()}
+
+function loadGoalStore(){
+  let store=null;
+  try{store=JSON.parse(localStorage.getItem(GOAL_STORE_KEY)||'null')}catch{}
+  if(store&&store.years)return store;
+
+  store={version:8,years:{}};
+
+  // Migrate any V7 values without mixing FYP and FYC.
+  try{
+    const old=JSON.parse(localStorage.getItem('db_production_goals_v7')||'null');
+    if(old){
+      let y=currentGoalYear();
+      if(old.updatedAt){
+        const d=new Date(old.updatedAt);
+        if(!Number.isNaN(d.getTime()))y=d.getFullYear();
+      }
+      store.years[String(y)]={
+        actualFyp:Math.max(0,Number(old.actualFyp)||0),
+        actualFyc:Math.max(0,Number(old.actualFyc)||0),
+        updatedAt:old.updatedAt||new Date().toISOString()
+      };
+    }
+  }catch{}
+
+  localStorage.setItem(GOAL_STORE_KEY,JSON.stringify(store));
+  return store
+}
+function saveGoalStore(store){localStorage.setItem(GOAL_STORE_KEY,JSON.stringify(store))}
+function goalYearSelected(){
+  const el=$('goalYear');
+  return el&&el.value?Number(el.value):currentGoalYear()
+}
+function loadGoalYear(year=currentGoalYear()){
+  const store=loadGoalStore();
+  const s=store.years[String(year)]||{};
+  return {
+    actualFyp:Math.max(0,Number(s.actualFyp)||0),
+    actualFyc:Math.max(0,Number(s.actualFyc)||0),
+    updatedAt:s.updatedAt||null
+  }
+}
+function saveGoalState(){
+  const year=goalYearSelected();
+  const store=loadGoalStore();
+  store.years[String(year)]={
+    actualFyp:Math.max(0,Number($('actualFyp').value)||0),
+    actualFyc:Math.max(0,Number($('actualFyc').value)||0),
+    updatedAt:new Date().toISOString()
+  };
+  saveGoalStore(store);
+  $('goalSaveStatus').textContent=lang==='th'?'บันทึกในเครื่องแล้ว ✓':'Saved locally ✓';
+  renderGoalTracker();
+  renderHomeGoalPulse();
+  return store.years[String(year)]
+}
+function nextProductionGoal(actualFyp){return FYP_GOALS.find(g=>actualFyp<g.targetFyp)||null}
+
+function populateGoalYears(preferred){
+  const el=$('goalYear');
+  if(!el)return;
+  const store=loadGoalStore();
+  const current=currentGoalYear();
+  const years=new Set(Object.keys(store.years).map(Number).filter(Boolean));
+  years.add(current);
+  // Keep 2026 visible because this system starts here.
+  years.add(2026);
+  const arr=[...years].sort((a,b)=>b-a);
+  const chosen=Number(preferred)||Number(el.value)||current;
+  el.innerHTML='';
+  arr.forEach(y=>{
+    const o=document.createElement('option');
+    o.value=String(y);
+    o.textContent=String(y)+(y===current?(lang==='th'?' — ปีปัจจุบัน':' — Current year'):'');
+    el.appendChild(o)
+  });
+  el.value=arr.includes(chosen)?String(chosen):String(current)
+}
+
+function renderGoalTracker(){
+  if(!$('goalLadder'))return;
+  const year=goalYearSelected();
+  const s=loadGoalYear(year);
+  const actualFyp=s.actualFyp||0;
+  const actualFyc=s.actualFyc||0;
+  const next=nextProductionGoal(actualFyp);
+
+  $('actualFyp').value=actualFyp||'';
+  $('actualFyc').value=actualFyc||'';
+  $('goalLadder').innerHTML='';
+
+  FYP_GOALS.forEach(g=>{
+    const gap=Math.max(0,g.targetFyp-actualFyp);
+    const pct=Math.min(100,g.targetFyp?actualFyp/g.targetFyp*100:0);
+    const achieved=actualFyp>=g.targetFyp;
+    const row=document.createElement('div');
+    row.className='goal-row';
+    row.innerHTML=
+      '<div class="goal-row-top"><div><div class="goal-name">'+g.name+
+      '</div><div class="goal-target">FYP '+money(g.targetFyp)+'</div></div>'+
+      '<span class="goal-badge '+(achieved?'achieved':'')+'">'+
+      (achieved?(lang==='th'?'สำเร็จ ✓':'Achieved ✓'):(lang==='th'?'กำลังไป':'In progress'))+
+      '</span></div>'+
+      '<div class="goal-track"><div class="goal-fill" style="width:'+pct+'%"></div></div>'+
+      '<div class="goal-row-grid">'+
+      '<div class="goal-mini"><strong>'+money(actualFyp)+'</strong><span>Actual FYP</span></div>'+
+      '<div class="goal-mini"><strong>'+money(gap)+'</strong><span>FYP Gap</span></div>'+
+      '<div class="goal-mini"><strong>'+pct.toFixed(1)+'%</strong><span>'+(lang==='th'?'ความคืบหน้า':'Progress')+'</span></div>'+
+      '</div>';
+    $('goalLadder').appendChild(row)
+  });
+
+  if(next){
+    const gap=Math.max(0,next.targetFyp-actualFyp);
+    const pct=Math.min(100,actualFyp/next.targetFyp*100);
+    $('nextGoalName').textContent=next.name;
+    $('nextGoalTarget').textContent=(lang==='th'?'เป้าหมาย FYP ':'FYP target ')+money(next.targetFyp);
+    $('nextActual').textContent=money(actualFyp);
+    $('nextGap').textContent=money(gap);
+    $('nextPercent').textContent=pct.toFixed(1)+'%';
+    $('nextGoalFill').style.width=pct+'%'
+  }else{
+    $('nextGoalName').textContent=lang==='th'?'Dallas Living สำเร็จ ✓':'Dallas Living achieved ✓';
+    $('nextGoalTarget').textContent='FYP '+money(FYP_GOALS.at(-1).targetFyp);
+    $('nextActual').textContent=money(actualFyp);
+    $('nextGap').textContent=money(0);
+    $('nextPercent').textContent='100%';
+    $('nextGoalFill').style.width='100%'
+  }
+
+  const fycGap=Math.max(0,DALLAS_FYC_TARGET-actualFyc);
+  const fycPct=Math.min(100,actualFyc/DALLAS_FYC_TARGET*100);
+  $('fycActualMetric').textContent=money(actualFyc);
+  $('fycGapMetric').textContent=money(fycGap);
+  $('fycPercentMetric').textContent=fycPct.toFixed(1)+'%';
+  $('fycGoalFill').style.width=fycPct+'%'
+}
+
+function renderHomeGoalPulse(){
+  if(!$('homeNextGoal'))return;
+  // Home always shows the current calendar year, even if an older year is being reviewed.
+  const s=loadGoalYear(currentGoalYear());
+  const actualFyp=s.actualFyp||0;
+  const actualFyc=s.actualFyc||0;
+  const next=nextProductionGoal(actualFyp);
+
+  $('homeGoalActual').textContent=compactMoney(actualFyp);
+  if(next){
+    const gap=Math.max(0,next.targetFyp-actualFyp);
+    const pct=Math.min(100,actualFyp/next.targetFyp*100);
+    $('homeNextGoal').textContent=next.name;
+    $('homeGoalGap').textContent=compactMoney(gap);
+    $('homeGoalFill').style.width=pct+'%'
+  }else{
+    $('homeNextGoal').textContent='Dallas Living ✓';
+    $('homeGoalGap').textContent=money(0);
+    $('homeGoalFill').style.width='100%'
+  }
+  $('homeFycActual').textContent=compactMoney(actualFyc);
+  $('homeFycGap').textContent=compactMoney(Math.max(0,DALLAS_FYC_TARGET-actualFyc))
+}
+
+function refreshGoalLanguage(){
+  if(!$('goalModal'))return;
+  $('goalTitle').textContent=lang==='th'?'เป้าหมายผลงาน':'Production Goals';
+  $('goalIntro').textContent=lang==='th'
+    ?'FYP = เบี้ยปีแรก (First Year Premium) • FYC = ค่าคอมมิชชั่นปีแรก (First Year Commission) — ติดตามแยกกัน'
+    :'FYP = First Year Premium. FYC = First Year Commission. Track them separately.';
+  $('goalYearLabel').textContent=lang==='th'?'ปีผลงาน':'Production year';
+  $('goalYearNote').textContent=lang==='th'
+    ?'ทุกวันที่ 1 มกราคม ปีใหม่จะเริ่ม Actual ที่ 0 อัตโนมัติ และเก็บปีก่อนไว้ดูย้อนหลัง'
+    :'Each January 1, the new year starts at Actual 0 automatically. Prior years stay saved.';
+  $('actualFypLabel').textContent=lang==='th'?'Actual FYP — เบี้ยปีแรก':'Actual FYP — First Year Premium';
+  $('actualFycLabel').textContent=lang==='th'?'Actual FYC — ค่าคอมมิชชั่นปีแรก':'Actual FYC — First Year Commission';
+  $('nextGoalLabel').textContent=lang==='th'?'เป้าหมาย FYP ถัดไป':'NEXT FYP GOAL';
+  $('actualLabelSmall').textContent='Actual FYP';
+  $('gapLabelSmall').textContent='FYP Gap';
+  $('progressLabelSmall').textContent=lang==='th'?'ความคืบหน้า':'Progress';
+  $('goalNote').textContent=lang==='th'
+    ?'FYP Ladder: MDRT → Convention → COT → TOT → Selfie Prime → Dallas Living'
+    :'FYP ladder: MDRT → Convention → COT → TOT → Selfie Prime → Dallas Living.';
+  $('fycGoalLabel').textContent=lang==='th'?'DALLAS LIVING — เป้าหมาย FYC รายปี':'DALLAS LIVING — ANNUAL FYC';
+  $('fycGoalText').textContent=lang==='th'?'เป้าหมาย FYC ต่อปี':'FYC target per year';
+  $('fycGapLabel').textContent='FYC Gap';
+  $('fycProgressLabel').textContent=lang==='th'?'ความคืบหน้า':'Progress';
+  $('fycNote').textContent=lang==='th'
+    ?'FYC คือค่าคอมมิชชั่น แยกจาก FYP Qualification Ladder'
+    :'FYC is commission. It is separate from the FYP qualification ladder.';
+  $('shareGoalsBtn').textContent=lang==='th'?'ส่งต่อความคืบหน้า':'Share progress';
+  $('closeGoalBottom').textContent=lang==='th'?'เรียบร้อย':'Done';
+  if($('goalsMoreHelp'))$('goalsMoreHelp').textContent=lang==='th'
+    ?'FYP: MDRT → Convention → COT → TOT → Selfie Prime → Dallas Living • FYC ติดตามแยกต่างหาก'
+    :'FYP: MDRT → Convention → COT → TOT → Selfie Prime → Dallas Living. FYC is tracked separately.';
+  if($('openGoalModeFromMore'))$('openGoalModeFromMore').textContent=lang==='th'?'◎ เปิด Goal Tracker':'◎ Open Goal Tracker';
+  if($('homeNextGoalLabel'))$('homeNextGoalLabel').textContent=lang==='th'?'เป้าหมาย FYP ถัดไป':'NEXT FYP GOAL';
+  if($('homeOpenGoals'))$('homeOpenGoals').textContent=lang==='th'?'เปิด Goal Tracker':'Open goal tracker';
+
+  const chosen=goalYearSelected();
+  populateGoalYears(chosen);
+  renderGoalTracker();
+  renderHomeGoalPulse();
+  refreshDallasLanguage()
+}
+function openGoalMode(){
+  $('moreModal').classList.add('hidden');
+  $('goalModal').classList.remove('hidden');
+  populateGoalYears(currentGoalYear());
+  refreshGoalLanguage();
+  renderGoalTracker()
+}
+function buildGoalSummary(){
+  const year=goalYearSelected();
+  const s=loadGoalYear(year);
+  const actualFyp=s.actualFyp||0,actualFyc=s.actualFyc||0;
+  const next=nextProductionGoal(actualFyp);
+  let a=[];
+  a.push((lang==='th'?'Dream Builder — เป้าหมายผลงาน ':'Dream Builder — Production Goals ')+year);
+  a.push('FYP — First Year Premium');
+  a.push('Actual FYP: '+money(actualFyp));
+  FYP_GOALS.forEach(g=>{
+    a.push((actualFyp>=g.targetFyp?'✓ ':'○ ')+g.name+' — FYP '+money(g.targetFyp)+' — Gap '+money(Math.max(0,g.targetFyp-actualFyp)))
+  });
+  if(next)a.push((lang==='th'?'FYP ถัดไป: ':'Next FYP goal: ')+next.name+' — Gap '+money(next.targetFyp-actualFyp));
+  a.push('');
+  a.push('FYC — First Year Commission');
+  a.push('Dallas Living FYC target: '+money(DALLAS_FYC_TARGET));
+  a.push('Actual FYC: '+money(actualFyc));
+  a.push('FYC Gap: '+money(Math.max(0,DALLAS_FYC_TARGET-actualFyc)));
+  return a.join('\n')
+}
+$('openGoalModeQuick').onclick=openGoalMode;
+$('homeOpenGoals').onclick=openGoalMode;
+$('openGoalModeFromMore').onclick=openGoalMode;
+$('closeGoalMode').onclick=()=>{$('goalModal').classList.add('hidden')};
+$('closeGoalBottom').onclick=()=>{$('goalModal').classList.add('hidden')};
+$('goalModal').onclick=e=>{if(e.target===$('goalModal'))$('goalModal').classList.add('hidden')};
+$('goalYear').onchange=()=>{renderGoalTracker()};
+['actualFyp','actualFyc'].forEach(id=>$(id).addEventListener('input',()=>{
+  $('goalSaveStatus').textContent=lang==='th'?'กำลังบันทึก...':'Saving...';
+  clearTimeout(goalSaveTimer);
+  goalSaveTimer=setTimeout(saveGoalState,350)
+}));
+$('shareGoalsBtn').onclick=()=>shareText(lang==='th'?'เป้าหมายผลงาน':'Production Goals',buildGoalSummary());
+
+
+const DALLAS_TARGET_DATE='2030-01-14';
+const DALLAS_SAVINGS_TARGET=2100000;
+const DALLAS_STORE_KEY='db_dallas_2030_v9';
+let dallasSaveTimer=null;
+
+function usd(n){
+  const v=Math.max(0,Number(n)||0);
+  return '$'+Math.round(v).toLocaleString('en-US')
+}
+function compactUsd(n){
+  const v=Math.max(0,Number(n)||0);
+  if(v>=1000000)return '$'+(v/1000000).toFixed(v%1000000?2:0).replace(/0+$/,'').replace(/\.$/,'')+'M';
+  if(v>=1000)return '$'+Math.round(v/1000)+'K';
+  return usd(v)
+}
+function loadDallasState(){
+  try{
+    const s=JSON.parse(localStorage.getItem(DALLAS_STORE_KEY)||'null');
+    if(s)return {actual:Math.max(0,Number(s.actual)||0),updatedAt:s.updatedAt||null}
+  }catch{}
+  return {actual:0,updatedAt:null}
+}
+function saveDallasState(){
+  const actual=Math.max(0,Number($('dallasActualInput').value)||0);
+  const s={actual,updatedAt:new Date().toISOString()};
+  localStorage.setItem(DALLAS_STORE_KEY,JSON.stringify(s));
+  $('dallasSaveStatus').textContent=lang==='th'?'บันทึกในเครื่องแล้ว ✓':'Saved locally ✓';
+  renderDallasTracker();
+  return s
+}
+function dallasTimeLeft(){
+  const now=new Date();
+  const today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+  const target=new Date(2030,0,14);
+  const days=Math.max(0,Math.ceil((target-today)/86400000));
+  let months=(target.getFullYear()-today.getFullYear())*12+(target.getMonth()-today.getMonth());
+  let anchor=new Date(today.getFullYear(),today.getMonth()+months,today.getDate());
+  if(anchor>target)months--;
+  months=Math.max(0,months);
+  return {days,months}
+}
+function renderDallasTracker(){
+  if(!$('dallasActualInput'))return;
+  const s=loadDallasState();
+  const actual=s.actual||0;
+  const gap=Math.max(0,DALLAS_SAVINGS_TARGET-actual);
+  const pct=Math.min(100,actual/DALLAS_SAVINGS_TARGET*100);
+  const t=dallasTimeLeft();
+
+  $('dallasActualInput').value=actual||'';
+  $('dallasDays').textContent=t.days.toLocaleString('en-US');
+  $('dallasMonthsText').textContent=lang==='th'
+    ?'เหลือประมาณ '+t.months+' เดือน'
+    :'About '+t.months+' months remaining';
+  $('dallasActualMetric').textContent=usd(actual);
+  $('dallasGapMetric').textContent=usd(gap);
+  $('dallasFundFill').style.width=pct+'%';
+
+  if($('homeDallasDays'))$('homeDallasDays').textContent=t.days.toLocaleString('en-US')+(lang==='th'?' วัน':' days');
+  if($('homeDallasActual'))$('homeDallasActual').textContent=compactUsd(actual);
+  if($('homeDallasGap'))$('homeDallasGap').textContent=compactUsd(gap);
+  if($('homeDallasFill'))$('homeDallasFill').style.width=pct+'%'
+}
+function refreshDallasLanguage(){
+  if(!$('dallasActualInput'))return;
+  $('dallasFundEyebrow').textContent='DALLAS 2030';
+  $('dallasCountdownText').textContent=lang==='th'?'วันถึง 14 มกราคม 2030':'days until January 14, 2030';
+  $('dallasTargetLabel').textContent=lang==='th'?'เป้าหมายเงินสะสม':'Savings goal';
+  $('dallasActualLabel').textContent=lang==='th'?'สะสมแล้วจริง':'Actual saved';
+  $('dallasGapLabel').textContent=lang==='th'?'ยังขาด':'Gap';
+  $('dallasActualInputLabel').textContent=lang==='th'?'เงิน Dallas ที่สะสมแล้ว (USD)':'Actual Dallas savings (USD)';
+  if($('homeDallasDate'))$('homeDallasDate').textContent=lang==='th'?'ถึง 14 ม.ค. 2030':'to Jan 14, 2030';
+  if($('homeOpenDallasGoals'))$('homeOpenDallasGoals').textContent=lang==='th'?'เปิด Dallas Tracker':'Open Dallas tracker';
+  renderDallasTracker()
+}
+$('dallasActualInput').addEventListener('input',()=>{
+  $('dallasSaveStatus').textContent=lang==='th'?'กำลังบันทึก...':'Saving...';
+  clearTimeout(dallasSaveTimer);
+  dallasSaveTimer=setTimeout(saveDallasState,350)
+});
+$('homeOpenDallasGoals').onclick=openGoalMode;
+
 const CLIENT_STAGES=['identify','connect','reveal','solve'];
 const CLIENT_STAGE_COPY={
  en:{
@@ -396,7 +814,16 @@ function refreshClientLanguage(){if(!$('clientModal'))return;$('clientModeTitle'
 $('openClientModeQuick').onclick=openClientMode;$('openClientModeFromMore').onclick=openClientMode;$('closeClientMode').onclick=()=>{$('clientModal').classList.add('hidden')};$('clientModal').onclick=e=>{if(e.target===$('clientModal'))$('clientModal').classList.add('hidden')};$('startClientSession').onclick=newClientSession;qsa('[data-client-stage]').forEach(b=>b.onclick=()=>setClientStage(b.dataset.clientStage));$('clientPrevStage').onclick=()=>{const i=CLIENT_STAGES.indexOf(activeClientStage);if(i>0)setClientStage(CLIENT_STAGES[i-1])};$('clientNextStage').onclick=()=>{const i=CLIENT_STAGES.indexOf(activeClientStage);if(i<CLIENT_STAGES.length-1)setClientStage(CLIENT_STAGES[i+1]);else showClientSummary()};$('clientStageNotes').addEventListener('input',()=>{if(!activeClientSession)return;activeClientSession.notes[activeClientStage]=$('clientStageNotes').value;$('clientAutosave').textContent=lang==='th'?'กำลังบันทึก...':'Saving...';clearTimeout(clientSaveTimer);clientSaveTimer=setTimeout(storeClientSession,450)});$('clientShowSummary').onclick=showClientSummary;$('copyClientSummary').onclick=async()=>{showClientSummary();try{await navigator.clipboard.writeText(buildClientSummary());$('clientAutosave').textContent=lang==='th'?'คัดลอกแล้ว ✓':'Copied ✓'}catch{}};$('shareClientSummary').onclick=()=>{showClientSummary();shareText((lang==='th'?'สรุปการสนทนา — ':'Client conversation — ')+(activeClientSession?.name||''),buildClientSummary())};$('finishClientSession').onclick=()=>{if(activeClientSession){activeClientSession.notes[activeClientStage]=$('clientStageNotes').value;storeClientSession()}$('clientModal').classList.add('hidden')};
 function openMore(tab='epos'){$('moreModal').classList.remove('hidden');switchMore(tab)}function switchMore(tab){qsa('[data-more]').forEach(b=>b.classList.toggle('active',b.dataset.more===tab));qsa('.more-pane').forEach(p=>p.classList.toggle('hidden',p.id!=='more-'+tab))}qsa('[data-more]').forEach(b=>b.onclick=()=>switchMore(b.dataset.more));$('moreBtn').onclick=()=>openMore('epos');$('closeMore').onclick=()=>$('moreModal').classList.add('hidden');$('moreModal').onclick=e=>{if(e.target===$('moreModal'))$('moreModal').classList.add('hidden')};
 async function hashPin(pin){const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(pin));return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join('')}function pinHash(){return localStorage.getItem('db_pin_hash')||''}function updateLockBtn(){$('lockNowBtn').classList.toggle('hidden',!pinHash())}function showLock(){if(pinHash())$('lockScreen').classList.remove('hidden')}$('setPinBtn').onclick=async()=>{const p=$('newPin').value,c=$('confirmPin').value;if(!/^\d{4,8}$/.test(p)){$('settingsMsg').textContent=lang==='th'?'PIN ต้องเป็นตัวเลข 4–8 หลัก':'PIN must be 4–8 digits';return}if(p!==c){$('settingsMsg').textContent=lang==='th'?'PIN สองช่องไม่ตรงกัน':'PINs do not match';return}localStorage.setItem('db_pin_hash',await hashPin(p));$('settingsMsg').textContent=lang==='th'?'ตั้ง PIN แล้ว ✓':'PIN set ✓';updateLockBtn()};$('removePinBtn').onclick=()=>{localStorage.removeItem('db_pin_hash');$('settingsMsg').textContent=lang==='th'?'ลบ PIN แล้ว':'PIN removed';updateLockBtn()};$('lockNowBtn').onclick=()=>{$('moreModal').classList.add('hidden');showLock()};$('unlockBtn').onclick=async()=>{if(await hashPin($('unlockPin').value)===pinHash()){$('lockScreen').classList.add('hidden');$('unlockPin').value='';$('lockMsg').textContent=''}else $('lockMsg').textContent=lang==='th'?'PIN ไม่ถูกต้อง':'Incorrect PIN'};
-function download(name,text,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500)}$('exportJsonBtn').onclick=()=>{saveDay(true);saveGlobal();const b={version:7,exportedAt:new Date().toISOString(),lang,global:globalState,goals:loadGoalState(),clientSessions:{index:clientIndex(),items:{}},dates:{},weeks:{}};clientIndex().forEach(id=>{const s=loadClientSession(id);if(s)b.clientSessions.items[id]=s});allDates().forEach(d=>b.dates[d]=loadDayState(d));for(let i=0;i<180;i+=7){const d=new Date();d.setDate(d.getDate()-i);const k=ds(mondayOf(d)),v=localStorage.getItem(wk(k));if(v)b.weeks[k]=v}download('dream-builder-backup-'+ds(new Date())+'.json',JSON.stringify(b,null,2),'application/json')};$('exportCsvBtn').onclick=()=>{saveDay(true);saveGlobal();const rows=[['date','dream_score','actions_completed','win1','win2','win3','win4','win5','reflection']];allDates().forEach(d=>{const s=loadDayState(d);rows.push([d,dayScore(s),completedActions(s),s.win1||'',s.win2||'',s.win3||'',s.win4||'',s.win5||'',s.reflection||''])});const csv=rows.map(r=>r.map(v=>'"'+String(v).replaceAll('"','""')+'"').join(',')).join('\n');download('dream-builder-'+ds(new Date())+'.csv',csv,'text/csv;charset=utf-8')};$('importJson').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const b=JSON.parse(r.result);if(b.global)localStorage.setItem('db_global',JSON.stringify(b.global));if(b.dates)Object.entries(b.dates).forEach(([d,s])=>{localStorage.setItem(key(d),JSON.stringify(s));registerDate(d)});if(b.weeks)Object.entries(b.weeks).forEach(([d,v])=>localStorage.setItem(wk(d),v));if(b.goals)localStorage.setItem('db_production_goals_v7',JSON.stringify(b.goals));if(b.clientSessions){saveClientIndex(b.clientSessions.index||[]);Object.entries(b.clientSessions.items||{}).forEach(([id,s])=>localStorage.setItem(clientKey(id),JSON.stringify(s)))}loadGlobal();loadDay();renderAll();renderClientSessionList();flash(lang==='th'?'กู้คืนข้อมูลแล้ว':'Backup restored')}catch{flash(lang==='th'?'ไฟล์สำรองไม่ถูกต้อง':'Invalid backup')}};r.readAsText(f)};
+function download(name,text,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500)}$('exportJsonBtn').onclick=()=>{saveDay(true);saveGlobal();const b={version:9,exportedAt:new Date().toISOString(),lang,global:globalState,goals:loadGoalStore(),dallas:loadDallasState(),clientSessions:{index:clientIndex(),items:{}},dates:{},weeks:{}};clientIndex().forEach(id=>{const s=loadClientSession(id);if(s)b.clientSessions.items[id]=s});allDates().forEach(d=>b.dates[d]=loadDayState(d));for(let i=0;i<180;i+=7){const d=new Date();d.setDate(d.getDate()-i);const k=ds(mondayOf(d)),v=localStorage.getItem(wk(k));if(v)b.weeks[k]=v}download('dream-builder-backup-'+ds(new Date())+'.json',JSON.stringify(b,null,2),'application/json')};$('exportCsvBtn').onclick=()=>{saveDay(true);saveGlobal();const rows=[['date','dream_score','actions_completed','win1','win2','win3','win4','win5','reflection']];allDates().forEach(d=>{const s=loadDayState(d);rows.push([d,dayScore(s),completedActions(s),s.win1||'',s.win2||'',s.win3||'',s.win4||'',s.win5||'',s.reflection||''])});const csv=rows.map(r=>r.map(v=>'"'+String(v).replaceAll('"','""')+'"').join(',')).join('\n');download('dream-builder-'+ds(new Date())+'.csv',csv,'text/csv;charset=utf-8')};$('importJson').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const b=JSON.parse(r.result);if(b.global)localStorage.setItem('db_global',JSON.stringify(b.global));if(b.dates)Object.entries(b.dates).forEach(([d,s])=>{localStorage.setItem(key(d),JSON.stringify(s));registerDate(d)});if(b.weeks)Object.entries(b.weeks).forEach(([d,v])=>localStorage.setItem(wk(d),v));if(b.goals){
+  if(b.goals.years){
+    localStorage.setItem(GOAL_STORE_KEY,JSON.stringify(b.goals));
+  }else{
+    const y=(b.goals.updatedAt&&!Number.isNaN(new Date(b.goals.updatedAt).getTime()))?new Date(b.goals.updatedAt).getFullYear():currentGoalYear();
+    const migrated={version:8,years:{}};
+    migrated.years[String(y)]={actualFyp:Number(b.goals.actualFyp)||0,actualFyc:Number(b.goals.actualFyc)||0,updatedAt:b.goals.updatedAt||new Date().toISOString()};
+    localStorage.setItem(GOAL_STORE_KEY,JSON.stringify(migrated));
+  }
+}if(b.dallas)localStorage.setItem(DALLAS_STORE_KEY,JSON.stringify(b.dallas));if(b.clientSessions){saveClientIndex(b.clientSessions.index||[]);Object.entries(b.clientSessions.items||{}).forEach(([id,s])=>localStorage.setItem(clientKey(id),JSON.stringify(s)))}loadGlobal();loadDay();renderAll();renderClientSessionList();flash(lang==='th'?'กู้คืนข้อมูลแล้ว':'Backup restored')}catch{flash(lang==='th'?'ไฟล์สำรองไม่ถูกต้อง':'Invalid backup')}};r.readAsText(f)};
 function renderAll(){renderDashboard();renderTodayHeading();renderProgress();if(typeof renderHomeGoalPulse==='function')renderHomeGoalPulse();if($('historyDate').value){renderHistoryReview();renderHistoryList()}}
 loadGlobal();loadDay();$('historyDate').value=$('day').value;historyMonth=monthKey($('historyDate').value);setLang(lang);updateLockBtn();showLock();
 })();
