@@ -65,6 +65,16 @@ footer{text-align:center;color:var(--muted);font-size:11px;padding:14px 0 2px}
 .dallas-mini strong{display:block;color:var(--navy);font-size:15px}
 .dallas-mini span{font-size:10px;color:var(--muted)}
 .dallas-home{border-color:#bfcfd7!important;background:linear-gradient(145deg,#f6fbfd,#fffaf0)!important}
+
+.epos-map-note-card{margin-top:12px;border:1px solid var(--line);border-radius:18px;padding:14px;background:#fff}
+.epos-map-note-card h3{margin:3px 0 5px;color:var(--navy);font-size:20px}
+.epos-map-note-card textarea{min-height:145px}
+.epos-map-help{border-left:4px solid var(--gold);padding:9px 0 9px 12px;color:#4b5563;margin:10px 0 12px}
+.epos-support-note{margin-top:10px;border:1px dashed #cabd9a;border-radius:16px;padding:12px;background:#fffdf8}
+.epos-support-note textarea{min-height:105px}
+.lens-chip.has-note::after{content:" ✓";color:var(--green)}
+.lens-chip.active.has-note::after{color:#fff}
+.dallas-home .metric strong{font-size:19px;line-height:1.15;word-break:break-word}
 @media(max-width:720px){.dallas-grid{grid-template-columns:1fr 1fr}.dallas-grid .dallas-mini:first-child{grid-column:1/-1}}
 @media(max-width:720px){.goal-year-row{grid-template-columns:1fr}}
 @media(max-width:720px){.dashboard-grid,.grid2,.grid3,.epos-grid{grid-template-columns:1fr}.quick-grid{grid-template-columns:1fr 1fr}.week-stats{grid-template-columns:1fr 1fr}.history-item{grid-template-columns:1fr}.brand h1{font-size:25px}.header-actions .chip span{display:none}.month-day{min-height:52px}.metric-row{grid-template-columns:repeat(3,1fr)}}
@@ -105,7 +115,7 @@ footer{text-align:center;color:var(--muted);font-size:11px;padding:14px 0 2px}
     <div class="goal-actuals">
       <div>
         <label id="actualFypLabel">Actual FYP — First Year Premium</label>
-        <input id="actualFyp" class="money-input" type="number" min="0" step="1000" inputmode="decimal" placeholder="0">
+        <input id="actualFyp" class="money-input" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0.00">
       </div>
       <div>
         <label id="actualFycLabel">Actual FYC — First Year Commission</label>
@@ -152,9 +162,9 @@ footer{text-align:center;color:var(--muted);font-size:11px;padding:14px 0 2px}
       <div class="goal-track"><div id="dallasFundFill" class="goal-fill"></div></div>
 
       <div class="dallas-grid">
-        <div class="dallas-mini"><strong>$2,100,000</strong><span id="dallasTargetLabel">Savings goal</span></div>
+        <div class="dallas-mini"><strong>$2,619,742.80</strong><span id="dallasTargetLabel">Savings goal</span></div>
         <div class="dallas-mini"><strong id="dallasActualMetric">$0</strong><span id="dallasActualLabel">Actual saved</span></div>
-        <div class="dallas-mini"><strong id="dallasGapMetric">$2,100,000</strong><span id="dallasGapLabel">Gap</span></div>
+        <div class="dallas-mini"><strong id="dallasGapMetric">$2,619,742.80</strong><span id="dallasGapLabel">Gap</span></div>
       </div>
 
       <label id="dallasActualInputLabel">Actual Dallas savings (USD)</label>
@@ -212,8 +222,28 @@ footer{text-align:center;color:var(--muted);font-size:11px;padding:14px 0 2px}
         <textarea id="clientStageNotes" class="client-notes" placeholder="Listen. Capture only what matters..."></textarea>
         <div id="clientAutosave" class="client-status">Saved locally</div>
       </div>
-      <h3 id="eposLensTitle">EPOS™ lens — tap only what you notice</h3>
+      <h3 id="eposLensTitle">EPOS™ Five Maps • One Family</h3>
+      <div id="eposMapsHelp" class="epos-map-help">Let the client choose the natural entry point. Do not force Map 1 → Map 5.</div>
       <div id="clientLensWrap" class="lens-wrap"></div>
+
+      <div class="epos-map-note-card">
+        <div class="eyebrow" id="eposSelectedMapLabel">SELECTED MAP</div>
+        <h3 id="eposMapName">FAMILY MAP</h3>
+        <p id="eposMapPurpose" class="muted"></p>
+        <div class="client-rule">
+          <strong id="eposAskLabel">ASK</strong>
+          <div id="eposMapQuestion"></div>
+        </div>
+        <label id="eposMapNotesLabel">What this map shows</label>
+        <textarea id="eposMapNotes" placeholder="Write what you currently understand. Leave room for correction..."></textarea>
+        <div id="eposMapAutosave" class="client-status">Saved locally</div>
+      </div>
+
+      <div class="epos-support-note">
+        <label id="eposUnknownLabel">? Unknowns ↔ Intersections</label>
+        <textarea id="eposUnknownNotes" placeholder="What remains unknown? What connects several maps?"></textarea>
+      </div>
+
       <div class="actions"><button id="clientPrevStage" class="btn">← Previous</button><button id="clientNextStage" class="btn primary">Next →</button></div>
       <div id="clientSummarySection" class="hidden">
         <h3 id="clientSummaryTitle">What I heard</h3>
@@ -238,13 +268,11 @@ footer{text-align:center;color:var(--muted);font-size:11px;padding:14px 0 2px}
       <button id="openClientModeFromMore" class="btn primary full" style="margin-bottom:12px">☕ Client Conversation Mode</button>
       <p class="muted" data-t="eposHelp">Professional reflection prompts for family-business conversations and meeting preparation.</p>
       <div class="epos-grid">
-        <div class="epos-card"><strong>Family</strong><p data-t="qFamily">Who needs to feel safe, heard, and protected?</p></div>
-        <div class="epos-card"><strong>Ownership</strong><p data-t="qOwnership">If ownership changed tomorrow, who would be affected?</p></div>
-        <div class="epos-card"><strong>Succession</strong><p data-t="qSuccession">If the leader's chair became empty, what would happen next?</p></div>
-        <div class="epos-card"><strong>Liquidity</strong><p data-t="qLiquidity">Where would cash come from when the family needs it most?</p></div>
-        <div class="epos-card"><strong>Control</strong><p data-t="qControl">What does the family want to keep control of, and for how long?</p></div>
-        <div class="epos-card"><strong>Relationships</strong><p data-t="qRelationships">Where could silence or unequal expectations create conflict?</p></div>
-        <div class="epos-card"><strong>Legacy</strong><p data-t="qLegacy">What should continue even when today's leaders are no longer here?</p></div>
+        <div class="epos-card"><strong>Family Map</strong><p>People • relationships • dependants • responsibilities</p></div>
+        <div class="epos-card"><strong>Business Map</strong><p>Value • people • relationships • dependency</p></div>
+        <div class="epos-card"><strong>Ownership &amp; Control Map</strong><p>Who owns • who benefits • who controls • who leads</p></div>
+        <div class="epos-card"><strong>Wealth &amp; Liquidity Map</strong><p>Total wealth • usable money • timing • funding sources</p></div>
+        <div class="epos-card"><strong>Legacy &amp; Continuity Map</strong><p>What matters • what must continue • what should transfer</p></div>
         <div class="epos-card"><strong>ICRS™</strong><p>Identify → Connect → Reveal → Solve</p></div>
       </div>
       <label data-t="clientNotes">Meeting / Client Notes</label>
@@ -301,7 +329,7 @@ footer{text-align:center;color:var(--muted);font-size:11px;padding:14px 0 2px}
         <div class="goal-pulse">
           <div><h2 id="homeDallasDays" style="margin-bottom:2px">— days</h2><small id="homeDallasDate">to Jan 14, 2030</small></div>
           <div class="metric"><strong id="homeDallasActual">$0</strong><span>Actual saved</span></div>
-          <div class="metric"><strong id="homeDallasGap">$2.1M</strong><span>Gap to $2.1M</span></div>
+          <div class="metric"><strong id="homeDallasGap">$2,619,742.80</strong><span>Gap to Dallas goal</span></div>
         </div>
         <div class="goal-track"><div id="homeDallasFill" class="goal-fill"></div></div>
         <button id="homeOpenDallasGoals" class="btn full">Open Dallas tracker</button>
@@ -696,13 +724,13 @@ $('shareGoalsBtn').onclick=()=>shareText(lang==='th'?'เป้าหมาย�
 
 
 const DALLAS_TARGET_DATE='2030-01-14';
-const DALLAS_SAVINGS_TARGET=2100000;
+const DALLAS_SAVINGS_TARGET=2619742.80;
 const DALLAS_STORE_KEY='db_dallas_2030_v9';
 let dallasSaveTimer=null;
 
 function usd(n){
   const v=Math.max(0,Number(n)||0);
-  return '$'+Math.round(v).toLocaleString('en-US')
+  return '$'+v.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})
 }
 function compactUsd(n){
   const v=Math.max(0,Number(n)||0);
@@ -754,8 +782,8 @@ function renderDallasTracker(){
   $('dallasFundFill').style.width=pct+'%';
 
   if($('homeDallasDays'))$('homeDallasDays').textContent=t.days.toLocaleString('en-US')+(lang==='th'?' วัน':' days');
-  if($('homeDallasActual'))$('homeDallasActual').textContent=compactUsd(actual);
-  if($('homeDallasGap'))$('homeDallasGap').textContent=compactUsd(gap);
+  if($('homeDallasActual'))$('homeDallasActual').textContent=usd(actual);
+  if($('homeDallasGap'))$('homeDallasGap').textContent=usd(gap);
   if($('homeDallasFill'))$('homeDallasFill').style.width=pct+'%'
 }
 function refreshDallasLanguage(){
@@ -792,29 +820,316 @@ const CLIENT_STAGE_COPY={
   solve:{eyebrow:'SOLVE',job:'ให้ก้าวถัดไปเป็นของลูกค้า',help:'ยังไม่ต้องรีบไปที่ผลิตภัณฑ์ ให้ชัดก่อนว่าผลลัพธ์ที่ต้องการคืออะไร',prompts:['ผลลัพธ์ที่ดีสำหรับคุณหน้าตาเป็นอย่างไรคะ','คุณอยากให้ก้าวต่อไปเป็นอะไรคะ','ใครบ้างควรมีส่วนร่วมคะ','อะไรจะทำให้คุณรู้สึกว่าเรื่องนี้จัดการเรียบร้อยแล้วคะ']}
  }
 };
-const EPOS_LENSES=['Family','Ownership','Succession','Liquidity','Control','Relationships','Legacy'];
-let activeClientSession=null,activeClientStage='identify',clientSaveTimer=null;
+
+const EPOS_MAPS=[
+  {
+    key:'family',
+    button:'Family',
+    titleEn:'FAMILY MAP',
+    titleTh:'FAMILY MAP • แผนที่ครอบครัว',
+    purposeEn:'See people, relationships, dependants and responsibilities before assets.',
+    purposeTh:'มองคน ความสัมพันธ์ ผู้ที่ต้องพึ่งพา และความรับผิดชอบ ก่อนมองทรัพย์สิน',
+    questionEn:'Before we talk about assets, who are the people you feel responsible for caring for?',
+    questionTh:'ถ้าวันนี้เรายังไม่พูดเรื่องทรัพย์สิน ใครบ้างคือคนที่พี่รู้สึกว่าต้องดูแล?'
+  },
+  {
+    key:'business',
+    button:'Business',
+    titleEn:'BUSINESS MAP',
+    titleTh:'BUSINESS MAP • แผนที่ธุรกิจ',
+    purposeEn:'See the business as a system of value, people, relationships and dependency.',
+    purposeTh:'มองธุรกิจเป็นระบบของคุณค่า คน ความสัมพันธ์ และสิ่งที่ยังพึ่งพาบุคคลสำคัญ',
+    questionEn:'If you explained the business as simply as possible, what keeps it running every day?',
+    questionTh:'ถ้าพี่อธิบายธุรกิจให้ฉันเข้าใจแบบง่ายที่สุด อะไรคือสิ่งที่ทำให้มันเดินได้ทุกวัน?'
+  },
+  {
+    key:'ownershipControl',
+    button:'Ownership & Control',
+    titleEn:'OWNERSHIP & CONTROL MAP',
+    titleTh:'OWNERSHIP & CONTROL MAP • แผนที่ความเป็นเจ้าของและอำนาจควบคุม',
+    purposeEn:'Separate who owns, who benefits, who controls and who leads.',
+    purposeTh:'แยกให้ชัดว่าใครเป็นเจ้าของ ใครได้ประโยชน์ ใครควบคุม และใครเป็นผู้นำ',
+    questionEn:'Are the people who own, decide and manage the business the same people today?',
+    questionTh:'วันนี้คนที่เป็นเจ้าของ คนที่ตัดสินใจ และคนที่บริหาร เป็นคนเดียวกันทั้งหมดไหมคะ?'
+  },
+  {
+    key:'wealthLiquidity',
+    button:'Wealth & Liquidity',
+    titleEn:'WEALTH & LIQUIDITY MAP',
+    titleTh:'WEALTH & LIQUIDITY MAP • แผนที่ความมั่งคั่งและสภาพคล่อง',
+    purposeEn:'Separate total wealth from money that can responsibly be used when needed.',
+    purposeTh:'แยกความมั่งคั่งรวม ออกจากเงินที่สามารถนำมาใช้ได้จริงเมื่อจำเป็น',
+    questionEn:'If the family needed a lump sum without touching the business, where would the money come from today?',
+    questionTh:'ถ้าครอบครัวต้องใช้เงินก้อนโดยไม่แตะธุรกิจ วันนี้เงินนั้นจะมาจากไหนคะ?'
+  },
+  {
+    key:'legacyContinuity',
+    button:'Legacy & Continuity',
+    titleEn:'LEGACY & CONTINUITY MAP',
+    titleTh:'LEGACY & CONTINUITY MAP • แผนที่เจตนาและความต่อเนื่อง',
+    purposeEn:'Connect what the founder values with what must continue in practice.',
+    purposeTh:'เชื่อมสิ่งที่ Founder ให้คุณค่า กับสิ่งที่ต้องเดินต่อได้จริง',
+    questionEn:'If three things should still continue one day when you are no longer the one looking after them, what are they?',
+    questionTh:'ถ้ามีสามสิ่งที่พี่อยากให้ยังอยู่ แม้วันหนึ่งพี่ไม่ได้เป็นคนดูแลเองแล้ว สามสิ่งนั้นคืออะไรคะ?'
+  }
+];
+
+let activeClientSession=null,activeClientStage='identify',activeClientMap='family',clientSaveTimer=null,clientMapSaveTimer=null;
+
+function emptyEposMaps(){
+  return {family:'',business:'',ownershipControl:'',wealthLiquidity:'',legacyContinuity:''}
+}
+function normalizeClientSession(s){
+  if(!s)return s;
+  s.notes=Object.assign({identify:'',connect:'',reveal:'',solve:''},s.notes||{});
+  s.lenses=Array.isArray(s.lenses)?s.lenses:[]; // keep older DB9 tags for history
+  s.eposMaps=Object.assign(emptyEposMaps(),s.eposMaps||{});
+  s.eposUnknowns=s.eposUnknowns||'';
+  s.lastMap=s.lastMap||'family';
+  return s
+}
 function clientIndex(){try{return JSON.parse(localStorage.getItem('db_client_index')||'[]')}catch{return[]}}
 function saveClientIndex(a){localStorage.setItem('db_client_index',JSON.stringify(a))}
 function clientKey(id){return 'db_client_'+id}
-function loadClientSession(id){try{return JSON.parse(localStorage.getItem(clientKey(id))||'null')}catch{return null}}
-function storeClientSession(){if(!activeClientSession)return;activeClientSession.updatedAt=new Date().toISOString();localStorage.setItem(clientKey(activeClientSession.id),JSON.stringify(activeClientSession));let a=clientIndex().filter(x=>x!==activeClientSession.id);a.unshift(activeClientSession.id);saveClientIndex(a.slice(0,50));$('clientAutosave').textContent=lang==='th'?'บันทึกในเครื่องแล้ว ✓':'Saved locally ✓';renderClientSessionList()}
-function newClientSession(){const name=$('clientName').value.trim()||(lang==='th'?'ไม่ระบุชื่อ':'Unnamed client');const date=$('clientDate').value||ds(new Date());activeClientSession={id:date+'-'+Date.now(),name,date,purpose:$('meetingPurpose').value.trim(),stage:'identify',notes:{identify:'',connect:'',reveal:'',solve:''},lenses:[],createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()};activeClientStage='identify';storeClientSession();openClientWork()}
-function openClientSession(id){const s=loadClientSession(id);if(!s)return;activeClientSession=s;activeClientSession.notes=activeClientSession.notes||{identify:'',connect:'',reveal:'',solve:''};activeClientSession.lenses=activeClientSession.lenses||[];activeClientStage=activeClientSession.stage||'identify';openClientWork()}
-function renderClientSessionList(){const box=$('clientSessionList');if(!box)return;box.innerHTML='';const ids=clientIndex();if(!ids.length){box.innerHTML='<p class="muted">'+(lang==='th'?'ยังไม่มีการสนทนาที่บันทึกไว้':'No saved conversations yet.')+'</p>';return}ids.slice(0,8).forEach(id=>{const s=loadClientSession(id);if(!s)return;const r=document.createElement('div');r.className='session-row';r.innerHTML='<div><strong>'+esc(s.name)+'</strong><small>'+fmtDate(s.date,{month:'short',day:'numeric',year:'numeric'})+(s.purpose?' • '+esc(s.purpose):'')+'</small></div><button class="btn" type="button">'+(lang==='th'?'เปิด':'Open')+'</button>';r.querySelector('button').onclick=()=>openClientSession(id);box.appendChild(r)})}
-function openClientMode(){$('moreModal').classList.add('hidden');$('clientModal').classList.remove('hidden');$('clientDate').value=ds(new Date());$('clientStartView').classList.remove('hidden');$('clientWorkView').classList.add('hidden');refreshClientLanguage();renderClientSessionList()}
-function openClientWork(){if(!activeClientSession)return;$('clientStartView').classList.add('hidden');$('clientWorkView').classList.remove('hidden');$('workingClientName').textContent=activeClientSession.name;$('workingPurpose').textContent=activeClientSession.purpose||'';$('workingDate').textContent=fmtDate(activeClientSession.date,{month:'short',day:'numeric',year:'numeric'});renderClientStage()}
+function loadClientSession(id){try{return normalizeClientSession(JSON.parse(localStorage.getItem(clientKey(id))||'null'))}catch{return null}}
+
+function syncClientInputs(){
+  if(!activeClientSession||$('clientWorkView').classList.contains('hidden'))return;
+  activeClientSession.notes[activeClientStage]=$('clientStageNotes').value;
+  activeClientSession.eposMaps[activeClientMap]=$('eposMapNotes').value;
+  activeClientSession.eposUnknowns=$('eposUnknownNotes').value;
+  activeClientSession.lastMap=activeClientMap;
+}
+function persistClientSession(){
+  if(!activeClientSession)return;
+  activeClientSession.updatedAt=new Date().toISOString();
+  localStorage.setItem(clientKey(activeClientSession.id),JSON.stringify(activeClientSession));
+  let a=clientIndex().filter(x=>x!==activeClientSession.id);
+  a.unshift(activeClientSession.id);
+  saveClientIndex(a.slice(0,50));
+  $('clientAutosave').textContent=lang==='th'?'บันทึกในเครื่องแล้ว ✓':'Saved locally ✓';
+  if($('eposMapAutosave'))$('eposMapAutosave').textContent=lang==='th'?'บันทึกในเครื่องแล้ว ✓':'Saved locally ✓';
+  renderClientSessionList()
+}
+function storeClientSession(){syncClientInputs();persistClientSession()}
+
+function newClientSession(){
+  const name=$('clientName').value.trim()||(lang==='th'?'ไม่ระบุชื่อ':'Unnamed client');
+  const date=$('clientDate').value||ds(new Date());
+  activeClientSession=normalizeClientSession({
+    id:date+'-'+Date.now(),name,date,purpose:$('meetingPurpose').value.trim(),stage:'identify',
+    notes:{identify:'',connect:'',reveal:'',solve:''},
+    lenses:[],eposMaps:emptyEposMaps(),eposUnknowns:'',lastMap:'family',
+    createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()
+  });
+  activeClientStage='identify';activeClientMap='family';
+  persistClientSession();openClientWork()
+}
+function openClientSession(id){
+  const s=loadClientSession(id);if(!s)return;
+  activeClientSession=s;
+  activeClientStage=activeClientSession.stage||'identify';
+  activeClientMap=activeClientSession.lastMap||'family';
+  openClientWork()
+}
+function renderClientSessionList(){
+  const box=$('clientSessionList');if(!box)return;box.innerHTML='';
+  const ids=clientIndex();
+  if(!ids.length){box.innerHTML='<p class="muted">'+(lang==='th'?'ยังไม่มีการสนทนาที่บันทึกไว้':'No saved conversations yet.')+'</p>';return}
+  ids.slice(0,8).forEach(id=>{
+    const s=loadClientSession(id);if(!s)return;
+    const r=document.createElement('div');r.className='session-row';
+    r.innerHTML='<div><strong>'+esc(s.name)+'</strong><small>'+fmtDate(s.date,{month:'short',day:'numeric',year:'numeric'})+(s.purpose?' • '+esc(s.purpose):'')+'</small></div><button class="btn" type="button">'+(lang==='th'?'เปิด':'Open')+'</button>';
+    r.querySelector('button').onclick=()=>openClientSession(id);box.appendChild(r)
+  })
+}
+function openClientMode(){
+  $('moreModal').classList.add('hidden');$('clientModal').classList.remove('hidden');
+  $('clientDate').value=ds(new Date());
+  $('clientStartView').classList.remove('hidden');$('clientWorkView').classList.add('hidden');
+  refreshClientLanguage();renderClientSessionList()
+}
+function openClientWork(){
+  if(!activeClientSession)return;
+  normalizeClientSession(activeClientSession);
+  $('clientStartView').classList.add('hidden');$('clientWorkView').classList.remove('hidden');
+  $('workingClientName').textContent=activeClientSession.name;
+  $('workingPurpose').textContent=activeClientSession.purpose||'';
+  $('workingDate').textContent=fmtDate(activeClientSession.date,{month:'short',day:'numeric',year:'numeric'});
+  renderClientStage()
+}
 function stageHasNotes(stage){return !!(activeClientSession&&activeClientSession.notes&&String(activeClientSession.notes[stage]||'').trim())}
-function renderClientStage(){if(!activeClientSession)return;const copy=CLIENT_STAGE_COPY[lang][activeClientStage];$('clientStageEyebrow').textContent=copy.eyebrow;$('clientOneJob').textContent=copy.job;$('clientStageHelp').textContent=copy.help;$('clientNotesLabel').textContent=lang==='th'?'สิ่งที่ฉันได้ยิน':'What I heard';$('clientStageNotes').placeholder=lang==='th'?'ฟัง แล้วจดเฉพาะสิ่งที่สำคัญ...':'Listen. Capture only what matters...';$('clientStageNotes').value=activeClientSession.notes[activeClientStage]||'';$('clientPromptChips').innerHTML='';copy.prompts.forEach((t,i)=>{const b=document.createElement('button');b.type='button';b.className='prompt-chip '+(i===0?'magic':'');b.textContent=t;b.onclick=()=>{$('clientStageNotes').focus()};$('clientPromptChips').appendChild(b)});qsa('[data-client-stage]').forEach(b=>{const s=b.dataset.clientStage;b.classList.toggle('active',s===activeClientStage);b.classList.toggle('done',stageHasNotes(s))});$('clientPrevStage').disabled=activeClientStage==='identify';$('clientNextStage').textContent=activeClientStage==='solve'?(lang==='th'?'ดูสิ่งที่ได้ยิน →':'Review what I heard →'):(lang==='th'?'ถัดไป →':'Next →');renderClientLenses();refreshClientLanguage()}
-function setClientStage(stage){if(!activeClientSession)return;activeClientSession.notes[activeClientStage]=$('clientStageNotes').value;activeClientSession.stage=stage;activeClientStage=stage;storeClientSession();renderClientStage()}
-function renderClientLenses(){const wrap=$('clientLensWrap');wrap.innerHTML='';EPOS_LENSES.forEach(l=>{const b=document.createElement('button');b.type='button';b.className='lens-chip'+(activeClientSession.lenses.includes(l)?' active':'');b.textContent=l;b.onclick=()=>{const i=activeClientSession.lenses.indexOf(l);if(i>=0)activeClientSession.lenses.splice(i,1);else activeClientSession.lenses.push(l);storeClientSession();renderClientLenses()};wrap.appendChild(b)})}
-function buildClientSummary(){if(!activeClientSession)return'';activeClientSession.notes[activeClientStage]=$('clientStageNotes').value;const n=activeClientSession.notes,l=activeClientSession.lenses||[],H=lang==='th';let a=[];a.push((H?'สรุปการสนทนา — ':'Client conversation — ')+activeClientSession.name);a.push(fmtDate(activeClientSession.date,{month:'long',day:'numeric',year:'numeric'}));if(activeClientSession.purpose)a.push((H?'เหตุผลที่พบกัน: ':'Meeting purpose: ')+activeClientSession.purpose);a.push('');[['identify',H?'IDENTIFY — สิ่งที่สำคัญ':'IDENTIFY — What matters'],['connect',H?'CONNECT — คนและความหมายที่เกี่ยวข้อง':'CONNECT — People & meaning'],['reveal',H?'REVEAL — สิ่งที่ต้องมองให้เห็น':'REVEAL — What became visible'],['solve',H?'SOLVE — ผลลัพธ์/ก้าวถัดไป':'SOLVE — Desired outcome / next step']].forEach(([k,h])=>{if((n[k]||'').trim()){a.push(h);a.push(n[k].trim());a.push('')}});if(l.length){a.push('EPOS™ lenses: '+l.join(' • '));a.push('')}a.push(H?'Next question: เราควรทำอะไรต่อจากนี้ร่วมกันดีคะ?':'Next question: What would be the right next step for us to take together?');return a.join('\n')}
-function showClientSummary(){if(!activeClientSession)return;activeClientSession.notes[activeClientStage]=$('clientStageNotes').value;storeClientSession();$('clientSummaryBox').textContent=buildClientSummary();$('clientSummarySection').classList.remove('hidden');$('clientSummarySection').scrollIntoView({behavior:'smooth',block:'start'})}
-function refreshClientLanguage(){if(!$('clientModal'))return;$('clientModeTitle').textContent=lang==='th'?'โหมดสนทนากับลูกค้า':'Client Conversation';$('clientMantraEyebrow').textContent=lang==='th'?'งานเดียวของฉัน':'YOUR ONLY JOB';$('clientMantra').textContent=lang==='th'?'ยิ้ม • อยากรู้จริง • “เล่าให้ฟังอีกหน่อยได้ไหมคะ”':'Smile. Stay curious. Tell me more.';$('clientMantraSub').textContent=lang==='th'?'ฟังก่อน เข้าใจก่อนแก้ ไม่ต้องพยายามทำให้ใครประทับใจ':'Listen first. Understand before solving. No need to impress.';$('clientNameLabel').textContent=lang==='th'?'ชื่อลูกค้า / ครอบครัว':'Client / Family name';$('clientDateLabel').textContent=lang==='th'?'วันที่':'Date';$('meetingPurposeLabel').textContent=lang==='th'?'วันนี้เรามาพบกันเรื่องอะไร?':'Why are we meeting?';$('clientRuleText').textContent=lang==='th'?'แอปถือโครงสร้างให้ ส่วนคุณถือความสัมพันธ์':'The app holds the structure. You hold the relationship.';$('startClientSession').textContent=lang==='th'?'เริ่มการสนทนา':'Start conversation';$('recentSessionsTitle').textContent=lang==='th'?'การสนทนาล่าสุด':'Recent conversations';$('eposLensTitle').textContent=lang==='th'?'มุมมอง EPOS™ — แตะเฉพาะสิ่งที่สังเกตเห็น':'EPOS™ lens — tap only what you notice';$('clientPrevStage').textContent=lang==='th'?'← ก่อนหน้า':'← Previous';$('clientShowSummary').textContent=lang==='th'?'ทบทวนสิ่งที่ฉันได้ยิน':'Review what I heard';$('finishClientSession').textContent=lang==='th'?'บันทึกและปิด':'Save & close';$('clientSummaryTitle').textContent=lang==='th'?'สิ่งที่ฉันได้ยิน':'What I heard';$('copyClientSummary').textContent=lang==='th'?'คัดลอกสรุป':'Copy summary';$('shareClientSummary').textContent=lang==='th'?'ส่งต่อสรุป':'Share summary';if(activeClientSession&&!$('clientWorkView').classList.contains('hidden')){const c=CLIENT_STAGE_COPY[lang][activeClientStage];$('clientStageEyebrow').textContent=c.eyebrow;$('clientOneJob').textContent=c.job;$('clientStageHelp').textContent=c.help}}
-$('openClientModeQuick').onclick=openClientMode;$('openClientModeFromMore').onclick=openClientMode;$('closeClientMode').onclick=()=>{$('clientModal').classList.add('hidden')};$('clientModal').onclick=e=>{if(e.target===$('clientModal'))$('clientModal').classList.add('hidden')};$('startClientSession').onclick=newClientSession;qsa('[data-client-stage]').forEach(b=>b.onclick=()=>setClientStage(b.dataset.clientStage));$('clientPrevStage').onclick=()=>{const i=CLIENT_STAGES.indexOf(activeClientStage);if(i>0)setClientStage(CLIENT_STAGES[i-1])};$('clientNextStage').onclick=()=>{const i=CLIENT_STAGES.indexOf(activeClientStage);if(i<CLIENT_STAGES.length-1)setClientStage(CLIENT_STAGES[i+1]);else showClientSummary()};$('clientStageNotes').addEventListener('input',()=>{if(!activeClientSession)return;activeClientSession.notes[activeClientStage]=$('clientStageNotes').value;$('clientAutosave').textContent=lang==='th'?'กำลังบันทึก...':'Saving...';clearTimeout(clientSaveTimer);clientSaveTimer=setTimeout(storeClientSession,450)});$('clientShowSummary').onclick=showClientSummary;$('copyClientSummary').onclick=async()=>{showClientSummary();try{await navigator.clipboard.writeText(buildClientSummary());$('clientAutosave').textContent=lang==='th'?'คัดลอกแล้ว ✓':'Copied ✓'}catch{}};$('shareClientSummary').onclick=()=>{showClientSummary();shareText((lang==='th'?'สรุปการสนทนา — ':'Client conversation — ')+(activeClientSession?.name||''),buildClientSummary())};$('finishClientSession').onclick=()=>{if(activeClientSession){activeClientSession.notes[activeClientStage]=$('clientStageNotes').value;storeClientSession()}$('clientModal').classList.add('hidden')};
+function renderClientStage(){
+  if(!activeClientSession)return;
+  const copy=CLIENT_STAGE_COPY[lang][activeClientStage];
+  $('clientStageEyebrow').textContent=copy.eyebrow;
+  $('clientOneJob').textContent=copy.job;
+  $('clientStageHelp').textContent=copy.help;
+  $('clientNotesLabel').textContent=lang==='th'?'สิ่งที่ฉันได้ยิน':'What I heard';
+  $('clientStageNotes').placeholder=lang==='th'?'ฟัง แล้วจดเฉพาะสิ่งที่สำคัญ...':'Listen. Capture only what matters...';
+  $('clientStageNotes').value=activeClientSession.notes[activeClientStage]||'';
+  $('clientPromptChips').innerHTML='';
+  copy.prompts.forEach((t,i)=>{
+    const b=document.createElement('button');b.type='button';
+    b.className='prompt-chip '+(i===0?'magic':'');b.textContent=t;
+    b.onclick=()=>{$('clientStageNotes').focus()};
+    $('clientPromptChips').appendChild(b)
+  });
+  qsa('[data-client-stage]').forEach(b=>{
+    const s=b.dataset.clientStage;
+    b.classList.toggle('active',s===activeClientStage);
+    b.classList.toggle('done',stageHasNotes(s))
+  });
+  $('clientPrevStage').disabled=activeClientStage==='identify';
+  $('clientNextStage').textContent=activeClientStage==='solve'
+    ?(lang==='th'?'ดูสิ่งที่ได้ยิน →':'Review what I heard →')
+    :(lang==='th'?'ถัดไป →':'Next →');
+  renderClientLenses();refreshClientLanguage()
+}
+function setClientStage(stage){
+  if(!activeClientSession)return;
+  syncClientInputs();
+  activeClientSession.stage=stage;activeClientStage=stage;
+  persistClientSession();renderClientStage()
+}
+function mapDef(key){return EPOS_MAPS.find(m=>m.key===key)||EPOS_MAPS[0]}
+function renderClientLenses(){
+  if(!activeClientSession)return;
+  normalizeClientSession(activeClientSession);
+  const wrap=$('clientLensWrap');wrap.innerHTML='';
+  EPOS_MAPS.forEach(m=>{
+    const note=String(activeClientSession.eposMaps[m.key]||'').trim();
+    const b=document.createElement('button');b.type='button';
+    b.className='lens-chip'+(activeClientMap===m.key?' active':'')+(note?' has-note':'');
+    b.textContent=m.button;
+    b.onclick=()=>{
+      syncClientInputs();
+      activeClientMap=m.key;activeClientSession.lastMap=m.key;
+      persistClientSession();renderClientLenses()
+    };
+    wrap.appendChild(b)
+  });
+  const m=mapDef(activeClientMap);
+  $('eposMapName').textContent=lang==='th'?m.titleTh:m.titleEn;
+  $('eposMapPurpose').textContent=lang==='th'?m.purposeTh:m.purposeEn;
+  $('eposMapQuestion').textContent=lang==='th'?m.questionTh:m.questionEn;
+  $('eposMapNotes').value=activeClientSession.eposMaps[activeClientMap]||'';
+  $('eposUnknownNotes').value=activeClientSession.eposUnknowns||''
+}
+function buildClientSummary(){
+  if(!activeClientSession)return'';
+  syncClientInputs();
+  const n=activeClientSession.notes,H=lang==='th';let a=[];
+  a.push((H?'สรุปการสนทนา — ':'Client conversation — ')+activeClientSession.name);
+  a.push(fmtDate(activeClientSession.date,{month:'long',day:'numeric',year:'numeric'}));
+  if(activeClientSession.purpose)a.push((H?'เหตุผลที่พบกัน: ':'Meeting purpose: ')+activeClientSession.purpose);
+  a.push('');
+  [['identify',H?'IDENTIFY — สิ่งที่สำคัญ':'IDENTIFY — What matters'],
+   ['connect',H?'CONNECT — คนและความหมายที่เกี่ยวข้อง':'CONNECT — People & meaning'],
+   ['reveal',H?'REVEAL — สิ่งที่ต้องมองให้เห็น':'REVEAL — What became visible'],
+   ['solve',H?'SOLVE — ผลลัพธ์/ก้าวถัดไป':'SOLVE — Desired outcome / next step']]
+  .forEach(([k,h])=>{if((n[k]||'').trim()){a.push(h);a.push(n[k].trim());a.push('')}});
+
+  const mapNotes=EPOS_MAPS.filter(m=>String(activeClientSession.eposMaps[m.key]||'').trim());
+  if(mapNotes.length){
+    a.push(H?'EPOS™ FIVE MAPS • ONE FAMILY':'EPOS™ FIVE MAPS • ONE FAMILY');
+    mapNotes.forEach(m=>{
+      a.push(m.button);
+      a.push(String(activeClientSession.eposMaps[m.key]).trim());
+      a.push('')
+    })
+  }
+  if((activeClientSession.eposUnknowns||'').trim()){
+    a.push(H?'? UNKNOWN ↔ INTERSECTIONS — สิ่งที่ยังไม่รู้ / จุดเชื่อมโยง':'? UNKNOWN ↔ INTERSECTIONS');
+    a.push(activeClientSession.eposUnknowns.trim());a.push('')
+  }
+  if(activeClientSession.lenses&&activeClientSession.lenses.length&&!mapNotes.length){
+    a.push((H?'EPOS™ tags จากบันทึกเดิม: ':'Earlier EPOS™ tags: ')+activeClientSession.lenses.join(' • '));a.push('')
+  }
+  a.push(H?'Next question: จากภาพทั้งหมด วันนี้เรื่องไหนที่พี่อยากเข้าใจให้ชัดขึ้นเป็นเรื่องแรก?':'Next question: From the whole picture, what would you like to understand more clearly first?');
+  return a.join('\n')
+}
+function showClientSummary(){
+  if(!activeClientSession)return;storeClientSession();
+  $('clientSummaryBox').textContent=buildClientSummary();
+  $('clientSummarySection').classList.remove('hidden');
+  $('clientSummarySection').scrollIntoView({behavior:'smooth',block:'start'})
+}
+function refreshClientLanguage(){
+  if(!$('clientModal'))return;
+  $('clientModeTitle').textContent=lang==='th'?'โหมดสนทนากับลูกค้า':'Client Conversation';
+  $('clientMantraEyebrow').textContent=lang==='th'?'งานเดียวของฉัน':'YOUR ONLY JOB';
+  $('clientMantra').textContent=lang==='th'?'ยิ้ม • อยากรู้จริง • “เล่าให้ฟังอีกหน่อยได้ไหมคะ”':'Smile. Stay curious. Tell me more.';
+  $('clientMantraSub').textContent=lang==='th'?'ฟังก่อน เข้าใจก่อนแก้ ไม่ต้องพยายามทำให้ใครประทับใจ':'Listen first. Understand before solving. No need to impress.';
+  $('clientNameLabel').textContent=lang==='th'?'ชื่อลูกค้า / ครอบครัว':'Client / Family name';
+  $('clientDateLabel').textContent=lang==='th'?'วันที่':'Date';
+  $('meetingPurposeLabel').textContent=lang==='th'?'วันนี้เรามาพบกันเรื่องอะไร?':'Why are we meeting?';
+  $('clientRuleText').textContent=lang==='th'?'แอปถือโครงสร้างให้ ส่วนคุณถือความสัมพันธ์':'The app holds the structure. You hold the relationship.';
+  $('startClientSession').textContent=lang==='th'?'เริ่มการสนทนา':'Start conversation';
+  $('recentSessionsTitle').textContent=lang==='th'?'การสนทนาล่าสุด':'Recent conversations';
+  $('eposLensTitle').textContent=lang==='th'?'EPOS™ FIVE MAPS • ONE FAMILY — ห้าแผนที่ • หนึ่งครอบครัว':'EPOS™ FIVE MAPS • ONE FAMILY';
+  $('eposMapsHelp').textContent=lang==='th'
+    ?'ให้ลูกค้าเลือกจุดเริ่มต้นตามธรรมชาติของเขา ไม่ต้องบังคับ Map 1 → Map 5'
+    :'Let the client choose the natural entry point. Do not force Map 1 → Map 5.';
+  $('eposSelectedMapLabel').textContent=lang==='th'?'แผนที่ที่กำลังดู':'SELECTED MAP';
+  $('eposAskLabel').textContent=lang==='th'?'ถาม':'ASK';
+  $('eposMapNotesLabel').textContent=lang==='th'?'สิ่งที่เราเข้าใจจากแผนที่นี้':'What this map shows';
+  $('eposMapNotes').placeholder=lang==='th'
+    ?'จดภาพที่เราเข้าใจในตอนนี้ และเปิดพื้นที่ไว้สำหรับการแก้ไข...'
+    :'Write what you currently understand. Leave room for correction...';
+  $('eposUnknownLabel').textContent=lang==='th'?'? UNKNOWN ↔ INTERSECTIONS — สิ่งที่ยังไม่รู้ / จุดเชื่อมโยง':'? UNKNOWN ↔ INTERSECTIONS';
+  $('eposUnknownNotes').placeholder=lang==='th'
+    ?'อะไรยังไม่ชัด? มีอะไรเชื่อมหลายแผนที่เข้าด้วยกัน?'
+    :'What remains unknown? What connects several maps?';
+  $('clientPrevStage').textContent=lang==='th'?'← ก่อนหน้า':'← Previous';
+  $('clientShowSummary').textContent=lang==='th'?'ทบทวนสิ่งที่ฉันได้ยิน':'Review what I heard';
+  $('finishClientSession').textContent=lang==='th'?'บันทึกและปิด':'Save & close';
+  $('clientSummaryTitle').textContent=lang==='th'?'สิ่งที่ฉันได้ยิน':'What I heard';
+  $('copyClientSummary').textContent=lang==='th'?'คัดลอกสรุป':'Copy summary';
+  $('shareClientSummary').textContent=lang==='th'?'ส่งต่อสรุป':'Share summary';
+  if(activeClientSession&&!$('clientWorkView').classList.contains('hidden')){
+    const c=CLIENT_STAGE_COPY[lang][activeClientStage];
+    $('clientStageEyebrow').textContent=c.eyebrow;
+    $('clientOneJob').textContent=c.job;
+    $('clientStageHelp').textContent=c.help;
+    renderClientLenses()
+  }
+}
+
+$('openClientModeQuick').onclick=openClientMode;
+$('openClientModeFromMore').onclick=openClientMode;
+$('closeClientMode').onclick=()=>{$('clientModal').classList.add('hidden')};
+$('clientModal').onclick=e=>{if(e.target===$('clientModal'))$('clientModal').classList.add('hidden')};
+$('startClientSession').onclick=newClientSession;
+qsa('[data-client-stage]').forEach(b=>b.onclick=()=>setClientStage(b.dataset.clientStage));
+$('clientPrevStage').onclick=()=>{const i=CLIENT_STAGES.indexOf(activeClientStage);if(i>0)setClientStage(CLIENT_STAGES[i-1])};
+$('clientNextStage').onclick=()=>{const i=CLIENT_STAGES.indexOf(activeClientStage);if(i<CLIENT_STAGES.length-1)setClientStage(CLIENT_STAGES[i+1]);else showClientSummary()};
+$('clientStageNotes').addEventListener('input',()=>{
+  if(!activeClientSession)return;
+  activeClientSession.notes[activeClientStage]=$('clientStageNotes').value;
+  $('clientAutosave').textContent=lang==='th'?'กำลังบันทึก...':'Saving...';
+  clearTimeout(clientSaveTimer);clientSaveTimer=setTimeout(storeClientSession,450)
+});
+$('eposMapNotes').addEventListener('input',()=>{
+  if(!activeClientSession)return;
+  activeClientSession.eposMaps[activeClientMap]=$('eposMapNotes').value;
+  $('eposMapAutosave').textContent=lang==='th'?'กำลังบันทึก...':'Saving...';
+  clearTimeout(clientMapSaveTimer);clientMapSaveTimer=setTimeout(storeClientSession,450)
+});
+$('eposUnknownNotes').addEventListener('input',()=>{
+  if(!activeClientSession)return;
+  activeClientSession.eposUnknowns=$('eposUnknownNotes').value;
+  $('eposMapAutosave').textContent=lang==='th'?'กำลังบันทึก...':'Saving...';
+  clearTimeout(clientMapSaveTimer);clientMapSaveTimer=setTimeout(storeClientSession,450)
+});
+$('clientShowSummary').onclick=showClientSummary;
+$('copyClientSummary').onclick=async()=>{showClientSummary();try{await navigator.clipboard.writeText(buildClientSummary());$('clientAutosave').textContent=lang==='th'?'คัดลอกแล้ว ✓':'Copied ✓'}catch{}};
+$('shareClientSummary').onclick=()=>{showClientSummary();shareText((lang==='th'?'สรุปการสนทนา — ':'Client conversation — ')+(activeClientSession?.name||''),buildClientSummary())};
+$('finishClientSession').onclick=()=>{if(activeClientSession)storeClientSession();$('clientModal').classList.add('hidden')};
+
 function openMore(tab='epos'){$('moreModal').classList.remove('hidden');switchMore(tab)}function switchMore(tab){qsa('[data-more]').forEach(b=>b.classList.toggle('active',b.dataset.more===tab));qsa('.more-pane').forEach(p=>p.classList.toggle('hidden',p.id!=='more-'+tab))}qsa('[data-more]').forEach(b=>b.onclick=()=>switchMore(b.dataset.more));$('moreBtn').onclick=()=>openMore('epos');$('closeMore').onclick=()=>$('moreModal').classList.add('hidden');$('moreModal').onclick=e=>{if(e.target===$('moreModal'))$('moreModal').classList.add('hidden')};
 async function hashPin(pin){const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(pin));return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join('')}function pinHash(){return localStorage.getItem('db_pin_hash')||''}function updateLockBtn(){$('lockNowBtn').classList.toggle('hidden',!pinHash())}function showLock(){if(pinHash())$('lockScreen').classList.remove('hidden')}$('setPinBtn').onclick=async()=>{const p=$('newPin').value,c=$('confirmPin').value;if(!/^\d{4,8}$/.test(p)){$('settingsMsg').textContent=lang==='th'?'PIN ต้องเป็นตัวเลข 4–8 หลัก':'PIN must be 4–8 digits';return}if(p!==c){$('settingsMsg').textContent=lang==='th'?'PIN สองช่องไม่ตรงกัน':'PINs do not match';return}localStorage.setItem('db_pin_hash',await hashPin(p));$('settingsMsg').textContent=lang==='th'?'ตั้ง PIN แล้ว ✓':'PIN set ✓';updateLockBtn()};$('removePinBtn').onclick=()=>{localStorage.removeItem('db_pin_hash');$('settingsMsg').textContent=lang==='th'?'ลบ PIN แล้ว':'PIN removed';updateLockBtn()};$('lockNowBtn').onclick=()=>{$('moreModal').classList.add('hidden');showLock()};$('unlockBtn').onclick=async()=>{if(await hashPin($('unlockPin').value)===pinHash()){$('lockScreen').classList.add('hidden');$('unlockPin').value='';$('lockMsg').textContent=''}else $('lockMsg').textContent=lang==='th'?'PIN ไม่ถูกต้อง':'Incorrect PIN'};
-function download(name,text,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500)}$('exportJsonBtn').onclick=()=>{saveDay(true);saveGlobal();const b={version:9,exportedAt:new Date().toISOString(),lang,global:globalState,goals:loadGoalStore(),dallas:loadDallasState(),clientSessions:{index:clientIndex(),items:{}},dates:{},weeks:{}};clientIndex().forEach(id=>{const s=loadClientSession(id);if(s)b.clientSessions.items[id]=s});allDates().forEach(d=>b.dates[d]=loadDayState(d));for(let i=0;i<180;i+=7){const d=new Date();d.setDate(d.getDate()-i);const k=ds(mondayOf(d)),v=localStorage.getItem(wk(k));if(v)b.weeks[k]=v}download('dream-builder-backup-'+ds(new Date())+'.json',JSON.stringify(b,null,2),'application/json')};$('exportCsvBtn').onclick=()=>{saveDay(true);saveGlobal();const rows=[['date','dream_score','actions_completed','win1','win2','win3','win4','win5','reflection']];allDates().forEach(d=>{const s=loadDayState(d);rows.push([d,dayScore(s),completedActions(s),s.win1||'',s.win2||'',s.win3||'',s.win4||'',s.win5||'',s.reflection||''])});const csv=rows.map(r=>r.map(v=>'"'+String(v).replaceAll('"','""')+'"').join(',')).join('\n');download('dream-builder-'+ds(new Date())+'.csv',csv,'text/csv;charset=utf-8')};$('importJson').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const b=JSON.parse(r.result);if(b.global)localStorage.setItem('db_global',JSON.stringify(b.global));if(b.dates)Object.entries(b.dates).forEach(([d,s])=>{localStorage.setItem(key(d),JSON.stringify(s));registerDate(d)});if(b.weeks)Object.entries(b.weeks).forEach(([d,v])=>localStorage.setItem(wk(d),v));if(b.goals){
+function download(name,text,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500)}$('exportJsonBtn').onclick=()=>{saveDay(true);saveGlobal();const b={version:9,revision:'DB9-LOCKED-FIVE-MAPS-MONEY-FIX',exportedAt:new Date().toISOString(),lang,global:globalState,goals:loadGoalStore(),dallas:loadDallasState(),clientSessions:{index:clientIndex(),items:{}},dates:{},weeks:{}};clientIndex().forEach(id=>{const s=loadClientSession(id);if(s)b.clientSessions.items[id]=s});allDates().forEach(d=>b.dates[d]=loadDayState(d));for(let i=0;i<180;i+=7){const d=new Date();d.setDate(d.getDate()-i);const k=ds(mondayOf(d)),v=localStorage.getItem(wk(k));if(v)b.weeks[k]=v}download('dream-builder-backup-'+ds(new Date())+'.json',JSON.stringify(b,null,2),'application/json')};$('exportCsvBtn').onclick=()=>{saveDay(true);saveGlobal();const rows=[['date','dream_score','actions_completed','win1','win2','win3','win4','win5','reflection']];allDates().forEach(d=>{const s=loadDayState(d);rows.push([d,dayScore(s),completedActions(s),s.win1||'',s.win2||'',s.win3||'',s.win4||'',s.win5||'',s.reflection||''])});const csv=rows.map(r=>r.map(v=>'"'+String(v).replaceAll('"','""')+'"').join(',')).join('\n');download('dream-builder-'+ds(new Date())+'.csv',csv,'text/csv;charset=utf-8')};$('importJson').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const b=JSON.parse(r.result);if(b.global)localStorage.setItem('db_global',JSON.stringify(b.global));if(b.dates)Object.entries(b.dates).forEach(([d,s])=>{localStorage.setItem(key(d),JSON.stringify(s));registerDate(d)});if(b.weeks)Object.entries(b.weeks).forEach(([d,v])=>localStorage.setItem(wk(d),v));if(b.goals){
   if(b.goals.years){
     localStorage.setItem(GOAL_STORE_KEY,JSON.stringify(b.goals));
   }else{
