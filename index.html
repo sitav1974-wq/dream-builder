@@ -75,6 +75,18 @@ footer{text-align:center;color:var(--muted);font-size:11px;padding:14px 0 2px}
 .lens-chip.has-note::after{content:" ✓";color:var(--green)}
 .lens-chip.active.has-note::after{color:#fff}
 .dallas-home .metric strong{font-size:19px;line-height:1.15;word-break:break-word}
+
+.discovery-six{margin:14px 0;border:1px solid #d7c28b;border-radius:20px;padding:15px;background:linear-gradient(145deg,#fffaf0,#fbfcfd)}
+.discovery-six h3{margin:2px 0 5px;color:var(--navy)}
+.discovery-six .sub{color:var(--muted);font-size:13px;margin-bottom:10px}
+.discovery-six-chips{display:flex;gap:7px;flex-wrap:wrap}
+.discovery-six-chip{border:1px solid var(--line);background:#fff;color:var(--navy);border-radius:999px;padding:8px 10px;font-size:13px;font-weight:850}
+.discovery-six-chip.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+.discovery-six-panel{margin-top:11px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:13px}
+.discovery-six-panel .qcat{font-size:12px;font-weight:900;color:#8a6a24;letter-spacing:.06em}
+.discovery-six-panel .qtext{font-size:18px;font-weight:900;line-height:1.35;color:var(--navy);margin:5px 0 8px}
+.discovery-six-panel .maps-to{font-size:12px;color:var(--muted);margin-bottom:9px}
+.discovery-six-panel .actions{margin-top:8px}
 @media(max-width:720px){.dallas-grid{grid-template-columns:1fr 1fr}.dallas-grid .dallas-mini:first-child{grid-column:1/-1}}
 @media(max-width:720px){.goal-year-row{grid-template-columns:1fr}}
 @media(max-width:720px){.dashboard-grid,.grid2,.grid3,.epos-grid{grid-template-columns:1fr}.quick-grid{grid-template-columns:1fr 1fr}.week-stats{grid-template-columns:1fr 1fr}.history-item{grid-template-columns:1fr}.brand h1{font-size:25px}.header-actions .chip span{display:none}.month-day{min-height:52px}.metric-row{grid-template-columns:repeat(3,1fr)}}
@@ -222,6 +234,22 @@ footer{text-align:center;color:var(--muted);font-size:11px;padding:14px 0 2px}
         <textarea id="clientStageNotes" class="client-notes" placeholder="Listen. Capture only what matters..."></textarea>
         <div id="clientAutosave" class="client-status">Saved locally</div>
       </div>
+
+      <div class="discovery-six">
+        <div class="eyebrow" id="sixQEyebrow">ASK TO DISCOVER</div>
+        <h3 id="sixQTitle">Six EPOS™ Discovery Questions</h3>
+        <div id="sixQSub" class="sub">Ask with curiosity. Record what you learn in the Five Maps — not in a second note system.</div>
+        <div id="sixQChips" class="discovery-six-chips"></div>
+        <div class="discovery-six-panel">
+          <div id="sixQCategory" class="qcat">FAMILY</div>
+          <div id="sixQText" class="qtext"></div>
+          <div id="sixQMapHint" class="maps-to"></div>
+          <div class="actions">
+            <button id="sixQOpenMap" type="button" class="btn">Open suggested map</button>
+          </div>
+        </div>
+      </div>
+
       <h3 id="eposLensTitle">EPOS™ Five Maps • One Family</h3>
       <div id="eposMapsHelp" class="epos-map-help">Let the client choose the natural entry point. Do not force Map 1 → Map 5.</div>
       <div id="clientLensWrap" class="lens-wrap"></div>
@@ -266,7 +294,8 @@ footer{text-align:center;color:var(--muted);font-size:11px;padding:14px 0 2px}
     </div>
     <div id="more-epos" class="more-pane">
       <button id="openClientModeFromMore" class="btn primary full" style="margin-bottom:12px">☕ Client Conversation Mode</button>
-      <p class="muted" data-t="eposHelp">Professional reflection prompts for family-business conversations and meeting preparation.</p>
+      <p class="muted" data-t="eposHelp">ICRS™ = how you behave • Six EPOS™ Questions = what you ask • Five EPOS™ Maps = what you see and record.</p>
+      <div class="epos-card" style="margin-bottom:10px"><strong>Six EPOS™ Discovery Questions</strong><p>Family • Leadership • Ownership • Liquidity • Conflict • Legacy</p></div>
       <div class="epos-grid">
         <div class="epos-card"><strong>Family Map</strong><p>People • relationships • dependants • responsibilities</p></div>
         <div class="epos-card"><strong>Business Map</strong><p>Value • people • relationships • dependency</p></div>
@@ -821,6 +850,77 @@ const CLIENT_STAGE_COPY={
  }
 };
 
+
+const EPOS_SIX_QUESTIONS=[
+  {key:'family',label:'Family',mapKey:'family',
+   en:'Who protects the family, and what life must continue?',
+   th:'ใครจะปกป้องครอบครัว และชีวิตแบบใดต้องดำเนินต่อ?',
+   hintEn:'Usually feeds: Family Map.',hintTh:'มักเชื่อมไปที่: Family Map'},
+  {key:'leadership',label:'Leadership',mapKey:'business',
+   en:'Who leads immediately and for the long term?',
+   th:'ใครจะนำธุรกิจทันทีและในระยะยาว?',
+   hintEn:'Usually feeds: Business Map — leadership, dependency and continuity.',
+   hintTh:'มักเชื่อมไปที่: Business Map — ผู้นำ การพึ่งพา และความต่อเนื่อง'},
+  {key:'ownership',label:'Ownership',mapKey:'ownershipControl',
+   en:'Who should own the shares, and under what rules?',
+   th:'ใครควรถือหุ้น และเงื่อนไขใดต้องชัดเจน?',
+   hintEn:'Usually feeds: Ownership & Control Map.',hintTh:'มักเชื่อมไปที่: Ownership & Control Map'},
+  {key:'liquidity',label:'Liquidity',mapKey:'wealthLiquidity',
+   en:'Where will cash come from to preserve time and options?',
+   th:'เงินสดจะมาจากไหนเพื่อซื้อเวลาและทางเลือก?',
+   hintEn:'Usually feeds: Wealth & Liquidity Map.',hintTh:'มักเชื่อมไปที่: Wealth & Liquidity Map'},
+  {key:'conflict',label:'Conflict',mapKey:'intersections',
+   en:'Where could conflict arise, and how can it be prevented?',
+   th:'ความขัดแย้งอาจเกิดตรงไหน และจะป้องกันอย่างไร?',
+   hintEn:'Often crosses maps. Record it under Unknowns ↔ Intersections, then link it to the relevant map(s).',
+   hintTh:'มักข้ามหลายแผนที่ ให้จดใน Unknowns ↔ Intersections แล้วเชื่อมไปยังแผนที่ที่เกี่ยวข้อง'},
+  {key:'legacy',label:'Legacy',mapKey:'legacyContinuity',
+   en:'What must continue, and what must never happen?',
+   th:'อะไรต้องดำเนินต่อ และอะไรต้องไม่เกิดขึ้น?',
+   hintEn:'Usually feeds: Legacy & Continuity Map.',hintTh:'มักเชื่อมไปที่: Legacy & Continuity Map'}
+];
+let activeSixQuestion='family';
+
+function sixDef(key){return EPOS_SIX_QUESTIONS.find(q=>q.key===key)||EPOS_SIX_QUESTIONS[0]}
+function renderSixQuestions(){
+  if(!$('sixQChips'))return;
+  const wrap=$('sixQChips');wrap.innerHTML='';
+  EPOS_SIX_QUESTIONS.forEach(q=>{
+    const b=document.createElement('button');
+    b.type='button';
+    b.className='discovery-six-chip'+(activeSixQuestion===q.key?' active':'');
+    b.textContent=q.label;
+    b.onclick=()=>{
+      activeSixQuestion=q.key;
+      if(activeClientSession){activeClientSession.lastDiscoveryQuestion=q.key;persistClientSession()}
+      renderSixQuestions()
+    };
+    wrap.appendChild(b)
+  });
+  const q=sixDef(activeSixQuestion);
+  $('sixQCategory').textContent=q.label.toUpperCase();
+  $('sixQText').textContent=lang==='th'?q.th:q.en;
+  $('sixQMapHint').textContent=lang==='th'?q.hintTh:q.hintEn;
+  $('sixQOpenMap').textContent=lang==='th'
+    ?(q.mapKey==='intersections'?'เปิด Unknowns ↔ Intersections':'เปิดแผนที่ที่เกี่ยวข้อง')
+    :(q.mapKey==='intersections'?'Open Unknowns ↔ Intersections':'Open suggested map')
+}
+function openSuggestedMapFromQuestion(){
+  const q=sixDef(activeSixQuestion);
+  if(q.mapKey==='intersections'){
+    $('eposUnknownNotes').focus();
+    $('eposUnknownNotes').scrollIntoView({behavior:'smooth',block:'center'});
+    return
+  }
+  syncClientInputs();
+  activeClientMap=q.mapKey;
+  if(activeClientSession){activeClientSession.lastMap=q.mapKey;persistClientSession()}
+  renderClientLenses();
+  $('eposMapNotes').focus();
+  $('eposMapNotes').scrollIntoView({behavior:'smooth',block:'center'})
+}
+$('sixQOpenMap').onclick=openSuggestedMapFromQuestion;
+
 const EPOS_MAPS=[
   {
     key:'family',
@@ -886,6 +986,7 @@ function normalizeClientSession(s){
   s.eposMaps=Object.assign(emptyEposMaps(),s.eposMaps||{});
   s.eposUnknowns=s.eposUnknowns||'';
   s.lastMap=s.lastMap||'family';
+  s.lastDiscoveryQuestion=s.lastDiscoveryQuestion||'family';
   return s
 }
 function clientIndex(){try{return JSON.parse(localStorage.getItem('db_client_index')||'[]')}catch{return[]}}
@@ -919,10 +1020,10 @@ function newClientSession(){
   activeClientSession=normalizeClientSession({
     id:date+'-'+Date.now(),name,date,purpose:$('meetingPurpose').value.trim(),stage:'identify',
     notes:{identify:'',connect:'',reveal:'',solve:''},
-    lenses:[],eposMaps:emptyEposMaps(),eposUnknowns:'',lastMap:'family',
+    lenses:[],eposMaps:emptyEposMaps(),eposUnknowns:'',lastMap:'family',lastDiscoveryQuestion:'family',
     createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()
   });
-  activeClientStage='identify';activeClientMap='family';
+  activeClientStage='identify';activeClientMap='family';activeSixQuestion='family';
   persistClientSession();openClientWork()
 }
 function openClientSession(id){
@@ -930,6 +1031,7 @@ function openClientSession(id){
   activeClientSession=s;
   activeClientStage=activeClientSession.stage||'identify';
   activeClientMap=activeClientSession.lastMap||'family';
+  activeSixQuestion=activeClientSession.lastDiscoveryQuestion||'family';
   openClientWork()
 }
 function renderClientSessionList(){
@@ -984,7 +1086,7 @@ function renderClientStage(){
   $('clientNextStage').textContent=activeClientStage==='solve'
     ?(lang==='th'?'ดูสิ่งที่ได้ยิน →':'Review what I heard →')
     :(lang==='th'?'ถัดไป →':'Next →');
-  renderClientLenses();refreshClientLanguage()
+  renderSixQuestions();renderClientLenses();refreshClientLanguage()
 }
 function setClientStage(stage){
   if(!activeClientSession)return;
@@ -1067,6 +1169,12 @@ function refreshClientLanguage(){
   $('clientRuleText').textContent=lang==='th'?'แอปถือโครงสร้างให้ ส่วนคุณถือความสัมพันธ์':'The app holds the structure. You hold the relationship.';
   $('startClientSession').textContent=lang==='th'?'เริ่มการสนทนา':'Start conversation';
   $('recentSessionsTitle').textContent=lang==='th'?'การสนทนาล่าสุด':'Recent conversations';
+  $('sixQEyebrow').textContent=lang==='th'?'ถามเพื่อค้นพบ':'ASK TO DISCOVER';
+  $('sixQTitle').textContent=lang==='th'?'Six EPOS™ Discovery Questions • 6 คำถามหลัก':'Six EPOS™ Discovery Questions';
+  $('sixQSub').textContent=lang==='th'
+    ?'ถามด้วยความอยากเข้าใจ แล้วบันทึกสิ่งที่เรียนรู้ลง Five Maps — ไม่สร้างระบบโน้ตชุดที่สอง'
+    :'Ask with curiosity. Record what you learn in the Five Maps — not in a second note system.';
+  renderSixQuestions();
   $('eposLensTitle').textContent=lang==='th'?'EPOS™ FIVE MAPS • ONE FAMILY — ห้าแผนที่ • หนึ่งครอบครัว':'EPOS™ FIVE MAPS • ONE FAMILY';
   $('eposMapsHelp').textContent=lang==='th'
     ?'ให้ลูกค้าเลือกจุดเริ่มต้นตามธรรมชาติของเขา ไม่ต้องบังคับ Map 1 → Map 5'
@@ -1129,7 +1237,7 @@ $('finishClientSession').onclick=()=>{if(activeClientSession)storeClientSession(
 
 function openMore(tab='epos'){$('moreModal').classList.remove('hidden');switchMore(tab)}function switchMore(tab){qsa('[data-more]').forEach(b=>b.classList.toggle('active',b.dataset.more===tab));qsa('.more-pane').forEach(p=>p.classList.toggle('hidden',p.id!=='more-'+tab))}qsa('[data-more]').forEach(b=>b.onclick=()=>switchMore(b.dataset.more));$('moreBtn').onclick=()=>openMore('epos');$('closeMore').onclick=()=>$('moreModal').classList.add('hidden');$('moreModal').onclick=e=>{if(e.target===$('moreModal'))$('moreModal').classList.add('hidden')};
 async function hashPin(pin){const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(pin));return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join('')}function pinHash(){return localStorage.getItem('db_pin_hash')||''}function updateLockBtn(){$('lockNowBtn').classList.toggle('hidden',!pinHash())}function showLock(){if(pinHash())$('lockScreen').classList.remove('hidden')}$('setPinBtn').onclick=async()=>{const p=$('newPin').value,c=$('confirmPin').value;if(!/^\d{4,8}$/.test(p)){$('settingsMsg').textContent=lang==='th'?'PIN ต้องเป็นตัวเลข 4–8 หลัก':'PIN must be 4–8 digits';return}if(p!==c){$('settingsMsg').textContent=lang==='th'?'PIN สองช่องไม่ตรงกัน':'PINs do not match';return}localStorage.setItem('db_pin_hash',await hashPin(p));$('settingsMsg').textContent=lang==='th'?'ตั้ง PIN แล้ว ✓':'PIN set ✓';updateLockBtn()};$('removePinBtn').onclick=()=>{localStorage.removeItem('db_pin_hash');$('settingsMsg').textContent=lang==='th'?'ลบ PIN แล้ว':'PIN removed';updateLockBtn()};$('lockNowBtn').onclick=()=>{$('moreModal').classList.add('hidden');showLock()};$('unlockBtn').onclick=async()=>{if(await hashPin($('unlockPin').value)===pinHash()){$('lockScreen').classList.add('hidden');$('unlockPin').value='';$('lockMsg').textContent=''}else $('lockMsg').textContent=lang==='th'?'PIN ไม่ถูกต้อง':'Incorrect PIN'};
-function download(name,text,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500)}$('exportJsonBtn').onclick=()=>{saveDay(true);saveGlobal();const b={version:9,revision:'DB9-LOCKED-FIVE-MAPS-MONEY-FIX',exportedAt:new Date().toISOString(),lang,global:globalState,goals:loadGoalStore(),dallas:loadDallasState(),clientSessions:{index:clientIndex(),items:{}},dates:{},weeks:{}};clientIndex().forEach(id=>{const s=loadClientSession(id);if(s)b.clientSessions.items[id]=s});allDates().forEach(d=>b.dates[d]=loadDayState(d));for(let i=0;i<180;i+=7){const d=new Date();d.setDate(d.getDate()-i);const k=ds(mondayOf(d)),v=localStorage.getItem(wk(k));if(v)b.weeks[k]=v}download('dream-builder-backup-'+ds(new Date())+'.json',JSON.stringify(b,null,2),'application/json')};$('exportCsvBtn').onclick=()=>{saveDay(true);saveGlobal();const rows=[['date','dream_score','actions_completed','win1','win2','win3','win4','win5','reflection']];allDates().forEach(d=>{const s=loadDayState(d);rows.push([d,dayScore(s),completedActions(s),s.win1||'',s.win2||'',s.win3||'',s.win4||'',s.win5||'',s.reflection||''])});const csv=rows.map(r=>r.map(v=>'"'+String(v).replaceAll('"','""')+'"').join(',')).join('\n');download('dream-builder-'+ds(new Date())+'.csv',csv,'text/csv;charset=utf-8')};$('importJson').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const b=JSON.parse(r.result);if(b.global)localStorage.setItem('db_global',JSON.stringify(b.global));if(b.dates)Object.entries(b.dates).forEach(([d,s])=>{localStorage.setItem(key(d),JSON.stringify(s));registerDate(d)});if(b.weeks)Object.entries(b.weeks).forEach(([d,v])=>localStorage.setItem(wk(d),v));if(b.goals){
+function download(name,text,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500)}$('exportJsonBtn').onclick=()=>{saveDay(true);saveGlobal();const b={version:9,revision:'DB9-DISCOVERY-ARCHITECTURE-PRELOCK',exportedAt:new Date().toISOString(),lang,global:globalState,goals:loadGoalStore(),dallas:loadDallasState(),clientSessions:{index:clientIndex(),items:{}},dates:{},weeks:{}};clientIndex().forEach(id=>{const s=loadClientSession(id);if(s)b.clientSessions.items[id]=s});allDates().forEach(d=>b.dates[d]=loadDayState(d));for(let i=0;i<180;i+=7){const d=new Date();d.setDate(d.getDate()-i);const k=ds(mondayOf(d)),v=localStorage.getItem(wk(k));if(v)b.weeks[k]=v}download('dream-builder-backup-'+ds(new Date())+'.json',JSON.stringify(b,null,2),'application/json')};$('exportCsvBtn').onclick=()=>{saveDay(true);saveGlobal();const rows=[['date','dream_score','actions_completed','win1','win2','win3','win4','win5','reflection']];allDates().forEach(d=>{const s=loadDayState(d);rows.push([d,dayScore(s),completedActions(s),s.win1||'',s.win2||'',s.win3||'',s.win4||'',s.win5||'',s.reflection||''])});const csv=rows.map(r=>r.map(v=>'"'+String(v).replaceAll('"','""')+'"').join(',')).join('\n');download('dream-builder-'+ds(new Date())+'.csv',csv,'text/csv;charset=utf-8')};$('importJson').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const b=JSON.parse(r.result);if(b.global)localStorage.setItem('db_global',JSON.stringify(b.global));if(b.dates)Object.entries(b.dates).forEach(([d,s])=>{localStorage.setItem(key(d),JSON.stringify(s));registerDate(d)});if(b.weeks)Object.entries(b.weeks).forEach(([d,v])=>localStorage.setItem(wk(d),v));if(b.goals){
   if(b.goals.years){
     localStorage.setItem(GOAL_STORE_KEY,JSON.stringify(b.goals));
   }else{
